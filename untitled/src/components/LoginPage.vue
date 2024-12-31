@@ -1,14 +1,42 @@
 <script setup>
 import {View} from '@element-plus/icons-vue'
-import {reactive} from "vue";
+import {reactive,ref} from "vue";
+import {login} from "@/net/index.js";
+import {ElMessage} from "element-plus";
+import router from "@/router/index.js";
+import Register from "@/components/Register.vue";
 
-const form=reactive({
-  username:'',
-  password:''
+const formRef=ref()
+const register=ref(false)
+
+const ruleForm=reactive({
+  username:"",
+  password:""
 })
 
-const login=()=>{
-  console.log(form)
+const rules=reactive({
+  username:[
+    {required:true,message:"用户名不能为空",trigger:"blur"},
+    {min:1,max:20,message: "用户名长度不能超过20个字符",trigger: "blur"}
+  ],
+  password:[
+    {required:true,message:"密码不能为空",trigger:"blur"},
+    {min:6,max:20,message: "用户名长度不能超过20个字符",trigger: "blur"}
+  ]
+})
+
+const submitForm=async (formEl)=>{
+  if(!formEl) return
+  await formEl.validate((valid,filed)=>{
+    if(valid){
+      login(ruleForm.username,ruleForm.password,1,
+          (data)=>{
+            router.push("/Index")
+          })
+    }else {
+      console.log("error submit",filed)
+    }
+  })
 }
 
 </script>
@@ -18,20 +46,32 @@ const login=()=>{
     <div class="Login_title">
       论坛
     </div>
-    <div class="login_form">
-      <div style="text-align: center;font-size: 20px">登录</div>
-      <el-menu mode="horizontal" style="background-color: rgba(241, 234, 234, 0.76)">
+    <div class="login_form" v-if="!register">
+      <el-menu mode="horizontal" style="background-color: rgba(241, 234, 234, 0)">
         <el-menu-item>密码登录</el-menu-item>
       </el-menu>
-      <el-form>
-        <el-input class="input" v-model="form.username" placeholder="请输入用户名或邮箱"/>
-        <el-input class="input" v-model="form.password" placeholder="请输入密码" type="password" :suffix-icon="View"/>
+      <el-form
+          ref="formRef"
+          :model="ruleForm"
+          :rules="rules">
+        <el-form-item prop="username">
+          <el-input class="input" v-model="ruleForm.username"  placeholder="请输入用户名或邮箱"/>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input class="input" v-model="ruleForm.password"  placeholder="请输入密码" type="password" :suffix-icon="View"/>
+        </el-form-item>
         <div style="text-align: right;margin-right: 130px">忘记密码</div>
-        <el-button @click="login" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">登录</el-button>
+        <el-form-item>
+          <el-button @click="submitForm(formRef)" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">登录</el-button>
+        </el-form-item>
       </el-form>
       <el-divider style="" content-position="center">其他登录方式</el-divider>
       <div style="text-align: center">QQ,WX,WB</div>
+      <div style="display: flex;justify-content: center">
+        <div class="register_link" @click="()=>{register=!register}">没有账号？立即注册</div>
+      </div>
     </div>
+    <Register v-if="register"/>
   </div>
 </template>
 
@@ -75,5 +115,27 @@ html,body{
   border: none;
   margin-top: 20px
 }
+
+
+
+:deep(.el-form-item__error){
+  left: 100px;
+  font-size: 15px;
+}
+
+:deep(.el-divider__text){
+  background-color: rgba(241, 234, 234, 0);
+}
+
+.register_link{
+  margin-top: 30px;
+  width: 150px;
+}
+
+.register_link:hover{
+  color: green;
+  cursor: default;
+}
+
 
 </style>

@@ -1,4 +1,4 @@
-package com.example.forum.Entity;
+package com.example.forum.Entity.Dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,10 +11,16 @@ import java.util.Date;
 @TableName("db_account")
 @AllArgsConstructor
 public class Account {
-    Integer user_id;
-    String user_name;
+    @TableField("user_id")
+    Integer userid;
+    @TableField("user_name")
+    String username;
+    @TableField("email")
     String email;
-    String user_password;
+    @TableField("user_password")
+    String password;
+    @TableField("creat_time")
     Date creat_time;
+    @TableField("role")
     String role;
 }

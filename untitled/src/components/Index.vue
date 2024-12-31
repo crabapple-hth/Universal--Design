@@ -1,9 +1,19 @@
 <script setup>
 import { ref } from 'vue'
+import {logout} from '../net/index.js'
+import router from "@/router/index.js";
 
 const activeIndex = ref('1')
+const avatar_form=ref(false)
+
 const handleSelect = (key, keyPath) => {
   console.log(key, keyPath)
+}
+
+const out=()=>{
+  logout(()=>{
+    console.log("退出")
+  })
 }
 </script>
 
@@ -28,6 +38,14 @@ const handleSelect = (key, keyPath) => {
               <input class="input_index" placeholder="搜索感兴趣的帖子">
               <img src="../assets/search.png" class="btn_pic" alt="搜索">
             </label>
+          </div>
+          <button class="avatar"  @click="()=>{avatar_form=!avatar_form}">
+            <el-avatar
+                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+            />
+          </button>
+          <div class="avatar_form" v-if="avatar_form">
+            <a href="#">退出登录</a>
           </div>
         </el-menu>
       </el-header>
@@ -83,6 +101,21 @@ const handleSelect = (key, keyPath) => {
   width: 25px;
   float: right;
   margin-right: 15px;
+}
+
+.avatar{
+  background-color: white;
+  margin-left: 50px;
+  border: none;
+}
+
+.avatar_form{
+  z-index: 5;
+  position: absolute;
+  top: 50px;
+  right: 70px;
+  border: 1px solid grey;
+  background-color: grey;
 }
 
 .main{

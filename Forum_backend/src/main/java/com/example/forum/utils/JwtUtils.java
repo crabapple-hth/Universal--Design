@@ -11,25 +11,40 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 @Component
-public class JWTutils {
+public class JwtUtils {
     private static final String jwtKey="this is user key";
+
+    private static final int expired = 72;
+
+    public static final HashSet<String> blackList = new HashSet<>();
 
     public static String CreatJWT(UserDetails user){
         Algorithm algorithm= Algorithm.HMAC256(jwtKey);
         Calendar calendar=Calendar.getInstance();
         Date now=calendar.getTime();
-        calendar.add(Calendar.SECOND,3600*24*7);
+        calendar.add(Calendar.SECOND,expired);
         return JWT.create()
+                .withJWTId(UUID.randomUUID().toString())
                 .withClaim("name",user.getUsername())
                 .withClaim("authorities",user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .withExpiresAt(calendar.getTime())
                 .withIssuedAt(now)
                 .sign(algorithm);
+    }
+    //将失效的token加入黑名单
+    public static boolean invalidate(String token){
+        Algorithm algorithm=Algorithm.HMAC256(jwtKey);
+        JWTVerifier jwtVerifier=JWT.require(algorithm).build();
+        try {
+            DecodedJWT verify =jwtVerifier.verify(token);
+            Map<String,Claim> claims=verify.getClaims();
+            return blackList.add(verify.getId());
+        }catch (JWTVerificationException e){
+            return false;
+        }
     }
 
     public static UserDetails resolveJwt(String token){
@@ -37,6 +52,8 @@ public class JWTutils {
         JWTVerifier jwtVerifier = JWT.require(algorithm).build();
         try {
             DecodedJWT verify = jwtVerifier.verify(token);  //对JWT令牌进行验证，看看是否被修改
+            if (blackList.contains(verify.getId()))
+                return null;
             Map<String, Claim> claims = verify.getClaims();  //获取令牌中内容
             if(new Date().after(claims.get("exp").asDate())) //如果是过期令牌则返回null
                 return null;

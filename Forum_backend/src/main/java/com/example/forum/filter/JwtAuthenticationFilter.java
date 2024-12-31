@@ -1,6 +1,5 @@
 package com.example.forum.filter;
 
-import com.example.forum.utils.JWTutils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,7 +18,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //继承OncePerRequestFilter表示每次请求过滤一次，用于快速编写JWT校验规则
     @Resource
-    JWTutils JwtUtils;
+com.example.forum.utils.JwtUtils JwtUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
