@@ -90,22 +90,31 @@ function logout(success,failure=defaultFailure){
     },failure)
 }
 
-function register(registerForm,success,failure=defaultFailure){
-    internalPost("/register",{
-        registerForm
-    },{
+function register(data,success,failure=defaultFailure){
+    internalPost("/api/auth/register",data,{
         'Content-Type':'application/x-www-form-urlencoded',
     },()=>{
-        ElMessage.success("注册成功")
+        success()
     },failure)
 }
 
-function getCode(success,failure){
-    internalGet("/getCode",{
-        'Content-Type':'application/x-www-form-urlencoded',
+
+function getCode(email,coldTime,success,failure){
+    coldTime.value=60
+    internalGet(`/api/auth/getCode?email=${email}`,{
+        'Content-Type':'application/json',
     },(data)=>{
-        success(data)
-    },failure)
+        success()
+        const handle= setInterval(()=>{
+            coldTime.value--
+            if (coldTime.value===0){
+                clearInterval(handle)
+            }
+        },1000)
+    },(message)=>{
+        failure(message)
+        coldTime.value=0
+    })
 }
 
 export {login,logout,getCode,register}

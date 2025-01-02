@@ -1,6 +1,5 @@
 package com.example.forum.Service.ServiceImpl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forum.Entity.Dto.Account;
@@ -10,6 +9,8 @@ import com.example.forum.Service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +31,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
     PasswordEncoder passwordEncoder;
 
     @Resource
-    StringRedisTemplate redisTemplate;
+    StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    JavaMailSender sender;
 
     @Override//通过用户名获取用户数据
     public Account GetUserByUsername(String username) {
@@ -39,20 +43,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
         return userMapper.selectOne(queryWrapper);
     }
 
-    public String VerifyCode(){
+    public String VerifyCode(String email){
         Random random=new Random();
         int code=random.nextInt(899999)+100000;
-        ValueOperations<String, String> operations=redisTemplate.opsForValue();
+        SimpleMailMessage message=new SimpleMailMessage();
+        message.setSubject("【htwx】验证码");
+        message.setText("您请求的验证码为"+code+"有效时间为三分钟，请勿将验证码告知他人避免账号被他人使用");
+        message.setTo(email);
+        message.setFrom("htwx123qq@163.com");
+        sender.send(message);
+        ValueOperations<String, String> operations=stringRedisTemplate.opsForValue();
         operations.set("RegisterEmailCode", String.valueOf(code),1, TimeUnit.MINUTES);
         return null;
     }
 
     @Override
-    public String getVerifyCode(RegisterVo registerVo) {
+    public String getVerifyCode(String email) {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("email", registerVo.getEmail());
-        if (userMapper.exists(queryWrapper)) {
-            return VerifyCode();
+        queryWrapper.eq("email", email);
+        if (!userMapper.exists(queryWrapper)) {
+            return VerifyCode(email);
         }else {
             return "该邮箱已被注册";
         }
@@ -60,8 +70,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
 
     @Override
     public String RegisterUserByEmail(RegisterVo registerVo) {
-        Integer code= Integer.valueOf(redisTemplate.opsForValue().get("RegisterEmailCode"));
-        if (registerVo.getCode()!=code){
+        String code=stringRedisTemplate.opsForValue().get("RegisterEmailCode");
+        if (!registerVo.getCode().equals(code)){
             return "验证码错误";
         }
         if (userMapper.exists(new QueryWrapper<Account>().eq("user_name",registerVo.getUsername()))){

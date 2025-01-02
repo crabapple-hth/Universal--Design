@@ -39,6 +39,13 @@ const submitForm=async (formEl)=>{
   })
 }
 
+const showRegister = () => {
+  register.value = !register.value;
+}
+const updateRegister=(val)=>{
+  register.value=val;
+}
+
 </script>
 
 <template>
@@ -71,7 +78,7 @@ const submitForm=async (formEl)=>{
         <div class="register_link" @click="()=>{register=!register}">没有账号？立即注册</div>
       </div>
     </div>
-    <Register v-if="register"/>
+    <Register v-if="register" @update:register="updateRegister" />
   </div>
 </template>
 
@@ -88,6 +95,7 @@ html,body{
   background-size: cover;
   position: relative;
 }
+
 .Login_title{
   font-size: 50px;
   align-items: center;
@@ -125,6 +133,11 @@ html,body{
 
 :deep(.el-divider__text){
   background-color: rgba(241, 234, 234, 0);
+}
+
+:deep(.el-message el-message--warning){
+  position: absolute !important;
+  left: 50px;
 }
 
 .register_link{

@@ -2,10 +2,20 @@
 
 import {View} from "@element-plus/icons-vue";
 import {ref,reactive} from "vue";
-import {onMounted,nextTick} from "vue";
 import {getCode, register} from "@/net/index.js";
+import router from "@/router/index.js";
+import {ElMessage} from "element-plus";
+import 'element-plus/dist/index.css'
+
 
 const registerFormRef=ref()
+const coldTime=ref(0)
+
+const emits=defineEmits(["update:register"])
+
+const showLogin = () => {
+  emits("update:register",false);
+};
 
 const ruleForm=reactive({
   email:"",
@@ -14,6 +24,7 @@ const ruleForm=reactive({
   repeatPassword:"",
   code:""
 })
+
 
 const validatePass=(rule,value,callback)=>{
   if (value===""){
@@ -66,9 +77,14 @@ const submitRegisterForm = async (formEl) =>{
   if (!formEl) return
   await formEl.validate((valid, filed) => {
     if (valid) {
-      console.log("验证通过");
-      register(formEl,()=>{
-        console.log("注册成功")
+      register({
+        email:ruleForm.email,
+        username:ruleForm.username,
+        password:ruleForm.password,
+        code:ruleForm.code
+      },()=>{
+        ElMessage.success("注册成功")
+        showLogin()
       })
     } else {
       console.log("Error submit", filed);
@@ -77,14 +93,17 @@ const submitRegisterForm = async (formEl) =>{
 };
 
 const askCode=()=>{
-  getCode(()=>{
-    console.log("获取成功")
+  getCode(ruleForm.email,coldTime,()=>{
+    ElMessage.success("请求验证码成功")
+  },(message)=>{
+    ElMessage.warning(message)
   })
 }
 </script>
 
 <template>
   <div class="register_form">
+    <div style="text-align: center;font-size: 20px;margin-bottom: 20px">欢迎注册</div>
     <el-form
         ref="registerFormRef"
         :model="ruleForm"
@@ -103,11 +122,12 @@ const askCode=()=>{
       </el-form-item>
       <el-form-item prop="code">
         <el-input class="code" v-model="ruleForm.code" placeholder="请输入验证码"/>
-        <el-button @click="getCode">获取验证码</el-button>
+        <el-button @click="askCode" :disabled="coldTime>0">{{coldTime>0 ? '请稍后'+coldTime+'秒':'获取验证码'}}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button @click="submitRegisterForm(registerFormRef)" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">注册</el-button>
       </el-form-item>
+      <a style="margin-left: 175px" href="#" @click="showLogin" >已有账号？点击登录</a>
     </el-form>
   </div>
 </template>
@@ -131,11 +151,15 @@ const askCode=()=>{
   width: 300px;
   margin-left: 100px;
   border: none;
-  margin-top: 20px
+  margin-top: 10px
 }
 
 .code{
   width: 200px;
   margin-left: 100px;
+}
+
+:deep(.el-message el-message__warning){
+  position: absolute;
 }
 </style>

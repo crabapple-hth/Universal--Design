@@ -52,7 +52,7 @@ const out=()=>{
       <el-container >
         <el-main class="main">
           <div>
-            <el-menu mode="horizontal" >
+            <el-menu mode="horizontal" default-active="0">
               <el-menu-item index="0" style="width: 100px;margin-right: 25px">推荐</el-menu-item>
               <el-menu-item index="1">关注</el-menu-item>
             </el-menu>
@@ -60,7 +60,8 @@ const out=()=>{
           <div>
             <div class="topics">
               <div class="title">这是标题</div>
-              <div class="text">这是内容</div>
+              <div class="text">我想每个人到了一定的阶段，一定的时候，总是会发生一些改变的，这种改变可能就是突然悟了，
+                突然明白了这个人生的意义和以后的发展就是这么回事，感觉整个人都升华了,所以到了年纪就是会明白的，就好像一个人长大了</div>
               <div>备用</div>
               <el-divider/>
             </div>
@@ -126,6 +127,20 @@ const out=()=>{
 .topics{
   margin-top: 20px;
 
+}
+
+.title{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.text{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  font-weight: 20;
 }
 
 .side{

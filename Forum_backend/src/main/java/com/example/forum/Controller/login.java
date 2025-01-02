@@ -4,14 +4,14 @@ import com.example.forum.Entity.RestBean;
 import com.example.forum.Entity.Vo.request.RegisterVo;
 import com.example.forum.Service.UserService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/")
+@RestController
+@RequestMapping("/api/auth")
 public class login {
 
     @Resource
@@ -19,14 +19,16 @@ public class login {
 
 
     @GetMapping("/getCode")
-    public RestBean<Object> GetCode(@Valid RegisterVo registerVo){
-        service.getVerifyCode(registerVo);
-        return RestBean.success();
+    public RestBean<Void> GetCode(@RequestParam @Email String email,
+                                    HttpServletRequest request){
+        String message=service.getVerifyCode(email);
+        return message==null ?  RestBean.success() : RestBean.failure(400,message);
     }
 
     @PostMapping("/register")
     public RestBean<Object> Register(@Valid RegisterVo registerVo){
-        service.RegisterUserByEmail(registerVo);
-        return RestBean.success();
+        System.out.println(registerVo);
+        String message=service.RegisterUserByEmail(registerVo);
+        return message==null ? RestBean.success() : RestBean.failure(400,message);
     }
 }

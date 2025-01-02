@@ -53,7 +53,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf->conf
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/auth/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(conf->conf
@@ -64,6 +66,10 @@ public class SecurityConfig {
                 .logout(conf->conf
                         .logoutUrl("/api/auth/logout")
                         .logoutSuccessHandler(this::logoutHandler)
+                )
+                .exceptionHandling(conf->
+                        conf.accessDeniedHandler(this::AuthenticationHandler)
+                                .authenticationEntryPoint(this::AuthenticationHandler)
                 )
                 .sessionManagement(conf->{
                     conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -84,6 +90,7 @@ public class SecurityConfig {
         if(exceptionOrAuthentication instanceof AccessDeniedException exception) {
             writer.write(RestBean.failure(403, exception.getMessage()).asJSONString());
         } else if(exceptionOrAuthentication instanceof AuthenticationException exception) {
+            System.out.println(request.getHeader("Origin"));
             writer.write(RestBean.failure(401, exception.getMessage()).asJSONString());
         } else if(exceptionOrAuthentication instanceof Authentication authentication){
             User user=(User) authentication.getPrincipal();

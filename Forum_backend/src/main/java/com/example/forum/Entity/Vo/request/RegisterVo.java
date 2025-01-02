@@ -14,5 +14,5 @@ public class RegisterVo {
     @Length(min=6,max=20)
     String password;
     @Length(min=6,max=6)
-    int code;
+    String code;
 }
