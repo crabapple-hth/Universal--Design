@@ -117,4 +117,12 @@ function getCode(email,coldTime,success,failure){
     })
 }
 
-export {login,logout,getCode,register}
+function getTopics(page,success,failure){
+    internalGet(`/index/all-topics?current=${page}`,{
+        'Content-Type':'application/json',
+    },(data)=>{
+        success(data)
+    },()=>failure())
+}
+
+export {login,logout,getCode,register,getTopics}

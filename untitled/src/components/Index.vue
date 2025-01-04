@@ -1,20 +1,83 @@
 <script setup>
-import { ref } from 'vue'
-import {logout} from '../net/index.js'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { getTopics, logout } from '../net/index.js'
 import router from "@/router/index.js";
+import { ElMessage } from "element-plus";
+
+const page = ref(1)
+const loading = ref(false);
+const noMoreData = ref(false);
 
 const activeIndex = ref('1')
-const avatar_form=ref(false)
+const avatar_form = ref(false) // 用于控制下拉菜单的显示
+const topics = reactive({
+  total: "",
+  topicList: []
+})
 
 const handleSelect = (key, keyPath) => {
   console.log(key, keyPath)
 }
 
-const out=()=>{
-  logout(()=>{
-    console.log("退出")
+const initIndex = () => {
+  loading.value = true;
+  getTopics(page.value, (data) => {
+    if (page.value === 1) {
+      topics.topicList = data.topics;
+      topics.total = data.total[0]
+    } else {
+      topics.topicList.push(...data.topics);
+    }
+    if (data.topics.length === 0) {
+      noMoreData.value = true
+      ElMessage.info("已经没有更多数据了")
+    }
+    loading.value = false;
+  }, () => {
+    ElMessage.warning("出现了一些错误，请刷新页面重试")
+    loading.value = false;
   })
 }
+
+const out = () => {
+  logout(() => {
+    console.log("退出")
+  })
+  router.push('/login'); //退出到登录页面
+}
+
+
+const handleScroll = () => {
+  if (loading.value || noMoreData.value) return;
+
+  const scrollTop = document.documentElement.scrollTop;
+  const clientHeight = document.documentElement.clientHeight;
+  const scrollHeight = document.documentElement.scrollHeight;
+
+  if (scrollTop + clientHeight >= scrollHeight - 10) {
+    page.value++;
+    initIndex();
+  }
+};
+
+const toggleAvatarForm = () => {
+  avatar_form.value = !avatar_form.value;
+};
+
+const navigateTo = (path) => {
+  avatar_form.value = false; // 关闭下拉菜单
+  router.push(path);
+};
+
+onMounted(() => {
+  initIndex()
+  window.addEventListener('scroll', handleScroll);
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+})
+
 </script>
 
 <template>
@@ -39,17 +102,20 @@ const out=()=>{
               <img src="../assets/search.png" class="btn_pic" alt="搜索">
             </label>
           </div>
-          <button class="avatar"  @click="()=>{avatar_form=!avatar_form}">
+          <button class="avatar"  @click="toggleAvatarForm">
             <el-avatar
                 src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
             />
           </button>
+          <!-- 头像下拉菜单 -->
           <div class="avatar_form" v-if="avatar_form">
-            <a href="#">退出登录</a>
+            <a @click="navigateTo('/')">主页</a>
+            <a @click="navigateTo('/settings')">设置</a>
+            <a @click="out">退出登录</a>
           </div>
         </el-menu>
       </el-header>
-      <el-container >
+      <el-container style="margin-top: 50px; ">
         <el-main class="main">
           <div>
             <el-menu mode="horizontal" default-active="0">
@@ -58,13 +124,14 @@ const out=()=>{
             </el-menu>
           </div>
           <div>
-            <div class="topics">
-              <div class="title">这是标题</div>
-              <div class="text">我想每个人到了一定的阶段，一定的时候，总是会发生一些改变的，这种改变可能就是突然悟了，
-                突然明白了这个人生的意义和以后的发展就是这么回事，感觉整个人都升华了,所以到了年纪就是会明白的，就好像一个人长大了</div>
+            <div class="topics" v-for="item in topics.topicList" :key="item.topic_id">
+              <div class="title">{{ item.title }}</div>
+              <div class="text">{{ item.text }}</div>
               <div>备用</div>
               <el-divider/>
             </div>
+            <div v-if="loading">加载中...</div>
+            <div v-else-if="noMoreData">没有更多数据了</div>
           </div>
         </el-main>
         <el-aside class="side" width="200px">这是边框</el-aside>
@@ -75,12 +142,18 @@ const out=()=>{
 
 
 <style scoped>
-
-.header{
-  width: 100%;
+.common-layout {
+  height: 100%;
+  overflow-y: auto;
 }
 
-.search-input{
+.header {
+  width: 100%;
+  position: fixed;
+  z-index: 1000;
+}
+
+.search-input {
   margin-left: 25px;
   margin-top: 15px;
   border: 1px solid grey;
@@ -88,7 +161,7 @@ const out=()=>{
   height: 30px;
 }
 
-.input_index{
+.input_index {
   border-radius: 15px;
   width: 300px;
   height: 25px;
@@ -97,44 +170,57 @@ const out=()=>{
   margin-left: 10px;
 }
 
-.btn_pic{
+.btn_pic {
   height: 25px;
   width: 25px;
   float: right;
   margin-right: 15px;
 }
 
-.avatar{
+.avatar {
   background-color: white;
   margin-left: 50px;
   border: none;
 }
 
-.avatar_form{
+.avatar_form {
   z-index: 5;
   position: absolute;
   top: 50px;
   right: 70px;
   border: 1px solid grey;
-  background-color: grey;
+  background-color: white;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
-.main{
+.avatar_form a {
+  padding: 5px 10px;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
+.avatar_form a:hover {
+  background-color: gainsboro;
+}
+.main {
   margin-left: 200px;
   margin-right: 100px;
 }
 
-.topics{
+.topics {
   margin-top: 20px;
 
 }
 
-.title{
+.title {
   font-size: 20px;
   font-weight: bold;
 }
 
-.text{
+.text {
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 2;
@@ -143,11 +229,12 @@ const out=()=>{
   font-weight: 20;
 }
 
-.side{
+.side {
   border: 1px solid gainsboro;
   margin-right: 50px;
-  margin-top: 20px;
   width: 20%;
+  height: 200px;
+  margin-top: 20px;
 }
 
 .el-menu--horizontal > .el-menu-item:nth-child(1) {
