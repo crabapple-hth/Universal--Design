@@ -1,8 +1,6 @@
 package com.example.forum.Service.ServiceImpl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forum.Entity.Dto.Topic;
@@ -13,7 +11,6 @@ import com.example.forum.Mapper.TopicLikeMapper;
 import com.example.forum.Mapper.TopicMapper;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -57,11 +54,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     public String changeLike(int topicId, int userId,int like) {
 //        String hashKey= String.valueOf(topicId)+userId;
 //        redisTemplate.opsForHash().put("topic_like",hashKey,like);
-        if (like==1&&!like(topicId,userId)) {
-            likeMapper.insert(new TopicLike());
+        if (like==0&&!like(topicId,userId)) {
+            likeMapper.insert(new TopicLike(topicId,userId,new Date()));
             return null;
         }
-        if (like==0&&like(topicId,userId)){
+        if (like==1&&like(topicId,userId)){
             likeMapper.delete(new QueryWrapper<TopicLike>().eq("user_id",userId));
         }
         return null;
@@ -71,11 +68,12 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     public String changeCollect(int topicId, int userId,int collect) {
 //        String hashKey= String.valueOf(topicId)+userId;
 //        redisTemplate.opsForHash().put("topic_collect",hashKey,collect);
-        if (collect==1&&!collect(topicId,userId)) {
-            collectMapper.insert(new TopicCollect());
+        if (collect==0&&!collect(topicId,userId)) {
+            TopicCollect topicCollect= new TopicCollect(topicId,userId,new Date());
+            collectMapper.insert(topicCollect);
             return null;
         }
-        if (collect==0&&collect(topicId,userId)){
+        if (collect==1&&collect(topicId,userId)){
             collectMapper.delete(new QueryWrapper<TopicCollect>().eq("user_id",userId));
         }
         return null;

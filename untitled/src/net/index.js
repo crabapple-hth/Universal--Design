@@ -137,7 +137,7 @@ function getTopicLikeCollect(topicId,success,failure){
 }
 
 function changeLike(topicId,like,success,failure){
-    internalGet(`/index/like/topicId=${topicId}&like=${like}`,{
+    internalGet(`/index/like?topicId=${topicId}&like=${like}`,{
         'Content-Type':'application/x-www-form-urlencoded',
         'Authorization':"Bearer "+ takeAccessToken()
     },()=>{
@@ -146,7 +146,7 @@ function changeLike(topicId,like,success,failure){
 }
 
 function changeCollect(topicId,collect,success){
-    internalGet(`/index/collect/topicId=${topicId}&like=${collect}`,{
+    internalGet(`/index/collect?topicId=${topicId}&like=${collect}`,{
         'Content-Type':'application/x-www-form-urlencoded',
         'Authorization':"Bearer "+ takeAccessToken()
     },()=>{

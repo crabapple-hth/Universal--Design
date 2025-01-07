@@ -2,12 +2,14 @@ package com.example.forum.Entity.Dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
 @TableName("db_topic_likes")
+@AllArgsConstructor
 public class TopicLike {
     @TableField("topic_id")
     int topicId;

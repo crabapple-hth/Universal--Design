@@ -17,7 +17,7 @@ import java.util.*;
 public class JwtUtils {
     private static final String jwtKey="this is user key";
 
-    private static final int expired = 72;
+    private static final int expired = 72000;
 
     public static final HashSet<String> blackList = new HashSet<>();
 
