@@ -21,18 +21,31 @@ public class JwtUtils {
 
     public static final HashSet<String> blackList = new HashSet<>();
 
-    public static String CreatJWT(UserDetails user){
+    public static String CreatJWT(UserDetails user,int userid){
         Algorithm algorithm= Algorithm.HMAC256(jwtKey);
         Calendar calendar=Calendar.getInstance();
         Date now=calendar.getTime();
         calendar.add(Calendar.SECOND,expired);
         return JWT.create()
                 .withJWTId(UUID.randomUUID().toString())
+                .withClaim("user_id",userid)
                 .withClaim("name",user.getUsername())
                 .withClaim("authorities",user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .withExpiresAt(calendar.getTime())
                 .withIssuedAt(now)
                 .sign(algorithm);
+    }
+
+    public int getId(String token){
+        Algorithm algorithm=Algorithm.HMAC256(jwtKey);
+        JWTVerifier jwtVerifier=JWT.require(algorithm).build();
+        try {
+            DecodedJWT verify =jwtVerifier.verify(token);
+            Map<String,Claim> claims=verify.getClaims();
+            return claims.get("user_id").asInt();
+        }catch (JWTVerificationException e){
+            return 0;
+        }
     }
     //将失效的token加入黑名单
     public static boolean invalidate(String token){

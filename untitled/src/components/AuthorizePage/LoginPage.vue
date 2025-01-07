@@ -4,7 +4,7 @@ import {reactive,ref} from "vue";
 import {login} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 import router from "@/router/index.js";
-import Register from "@/components/Register.vue";
+import Register from "@/components/AuthorizePage/Register.vue";
 
 const formRef=ref()
 const register=ref(false)
@@ -89,7 +89,7 @@ html,body{
   padding: 0;
 }
 .login_page{
-  background: url("../assets/background.jpg") center center no-repeat;
+  background: url("../../assets/background.jpg") center center no-repeat;
   width: 100%;
   height: 100vh;
   background-size: cover;

@@ -27,7 +27,6 @@ public class login {
 
     @PostMapping("/register")
     public RestBean<Object> Register(@Valid RegisterVo registerVo){
-        System.out.println(registerVo);
         String message=service.RegisterUserByEmail(registerVo);
         return message==null ? RestBean.success() : RestBean.failure(400,message);
     }

@@ -1,5 +1,9 @@
 package com.example.forum.filter;
 
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.forum.utils.JwtUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,12 +17,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //继承OncePerRequestFilter表示每次请求过滤一次，用于快速编写JWT校验规则
     @Resource
-com.example.forum.utils.JwtUtils JwtUtils;
+    JwtUtils jwtUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
@@ -37,6 +42,7 @@ com.example.forum.utils.JwtUtils JwtUtils;
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 //然后直接把配置好的Authentication塞给SecurityContext表示已经完成验证
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                request.setAttribute("user_id",jwtUtils.getId(token));
             }
         }
         //最后放行，继续下一个过滤器

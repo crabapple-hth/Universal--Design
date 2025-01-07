@@ -9,9 +9,19 @@ const router=createRouter({
             component:()=>import('@/components/Index.vue')
         },
         {
-            path:'/',
+            path:'/login',
             name:'login',
-            component:()=>import('@/components/LoginPage.vue')
+            component:()=>import('@/components/AuthorizePage/LoginPage.vue')
+        },
+        {
+            path:'/account/info',
+            name:'userinfo',
+            component:()=>import('@/components/UserPage/UserInfo.vue')
+        },
+        {
+            path:'/account/setting',
+            name:'userSetting',
+            component:()=>import('@/components/UserPage/Setting.vue')
         }
     ]
 })

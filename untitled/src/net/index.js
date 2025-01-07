@@ -19,7 +19,7 @@ const defaultError=(err)=>{
 //获取本地存储的token
 function takeAccessToken(){
     const str=localStorage.getItem(authItemName) ||sessionStorage.getItem(authItemName)
-    if(str) return null;
+    if(!str) return null;
     const authObj=JSON.parse(str)
     if(authObj.expire <= new Date()){
         deleteAccessToken()
@@ -75,13 +75,14 @@ function login(username,password,remember,success,failure=defaultFailure){
     },{
         'Content-Type':'application/x-www-form-urlencoded'
     },(data)=>{
-        storeAccessToken(remember,data.token,data.expire)
+        storeAccessToken(remember,data.token,data.expired)
         ElMessage.success(`登录成功，欢迎${data.username}`)
         success(data)
     },failure)
 }
 
 function logout(success,failure=defaultFailure){
+    console.log(takeAccessToken()+111)
     internalGet("/api/auth/logout",{
         'Content-Type':'application/x-www-form-urlencoded',
         'Authorization':"Bearer "+ takeAccessToken()
@@ -119,10 +120,38 @@ function getCode(email,coldTime,success,failure){
 
 function getTopics(page,success,failure){
     internalGet(`/index/all-topics?current=${page}`,{
-        'Content-Type':'application/json',
+        'Content-Type':'application/x-www-form-urlencoded',
+        'Authorization':"Bearer "+ takeAccessToken()
     },(data)=>{
         success(data)
     },()=>failure())
 }
 
-export {login,logout,getCode,register,getTopics}
+function getTopicLikeCollect(topicId,success,failure){
+    internalGet(`/index/user-like-collect?topicId=${topicId}`,{
+        'Content-Type':'application/x-www-form-urlencoded',
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>{
+        success(data)
+    },()=>failure())
+}
+
+function changeLike(topicId,like,success,failure){
+    internalGet(`/index/like/topicId=${topicId}&like=${like}`,{
+        'Content-Type':'application/x-www-form-urlencoded',
+        'Authorization':"Bearer "+ takeAccessToken()
+    },()=>{
+        success()
+    },()=>failure())
+}
+
+function changeCollect(topicId,collect,success){
+    internalGet(`/index/collect/topicId=${topicId}&like=${collect}`,{
+        'Content-Type':'application/x-www-form-urlencoded',
+        'Authorization':"Bearer "+ takeAccessToken()
+    },()=>{
+        success()
+    })
+}
+
+export {login,logout,getCode,register,getTopics,getTopicLikeCollect,changeLike,changeCollect}

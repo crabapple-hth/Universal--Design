@@ -53,9 +53,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf->conf
-                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/auth/**")
-                        .permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(conf->conf
@@ -90,12 +88,11 @@ public class SecurityConfig {
         if(exceptionOrAuthentication instanceof AccessDeniedException exception) {
             writer.write(RestBean.failure(403, exception.getMessage()).asJSONString());
         } else if(exceptionOrAuthentication instanceof AuthenticationException exception) {
-            System.out.println(request.getHeader("Origin"));
             writer.write(RestBean.failure(401, exception.getMessage()).asJSONString());
         } else if(exceptionOrAuthentication instanceof Authentication authentication){
             User user=(User) authentication.getPrincipal();
             Account account=mapper.selectOne(new QueryWrapper<Account>().eq("user_name",user.getUsername()));
-            String jwt= JwtUtils.CreatJWT(user);
+            String jwt= JwtUtils.CreatJWT(user,account.getUserid());
             AuthorizeVo vo= new AuthorizeVo();
             BeanUtils.copyProperties(account,vo);
             vo.setToken(jwt);

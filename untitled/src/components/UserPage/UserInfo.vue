@@ -1,66 +1,18 @@
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
-import { getTopics, logout } from '../net/index.js'
+import {logout} from "@/net/index.js";
+import {ElMessage} from "element-plus";
 import router from "@/router/index.js";
-import { ElMessage } from "element-plus";
-import Topic from "@/components/Topic/topic.vue";
+import {ref} from "vue";
 
-const page = ref(1)
+const avatar_form = ref(false)
+const activeIndex = ref('1')
 const loading = ref(false);
 const noMoreData = ref(false);
-
-
-const activeIndex = ref('1')
-const avatar_form = ref(false) // 用于控制下拉菜单的显示
-const topics = reactive({
-  total: "",
-  topicList: []
-})
 
 const handleSelect = (key, keyPath) => {
   console.log(key, keyPath)
 }
 
-const initIndex = () => {
-  loading.value = true;
-  getTopics(page.value, (data) => {
-    if (page.value === 1) {
-      topics.topicList = data.topics;
-      topics.total = data.total[0]
-    } else {
-      topics.topicList.push(...data.topics);
-    }
-    if (data.topics.length === 0) {
-      noMoreData.value = true
-      ElMessage.warning("已经没有更多数据了")
-    }
-    loading.value = false;
-  }, () => {
-    ElMessage.warning("出现了一些错误，请刷新页面重试")
-    loading.value = false;
-  })
-}
-
-const out = () => {
-  logout(() => {
-    ElMessage.success("退出登录成功")
-  })
-  router.push('/login');
-}
-
-
-const handleScroll = () => {
-  if (loading.value || noMoreData.value) return;
-
-  const scrollTop = document.documentElement.scrollTop;
-  const clientHeight = document.documentElement.clientHeight;
-  const scrollHeight = document.documentElement.scrollHeight;
-
-  if (scrollTop + clientHeight >= scrollHeight - 10) {
-    page.value++;
-    initIndex();
-  }
-};
 
 const toggleAvatarForm = () => {
   avatar_form.value = !avatar_form.value;
@@ -72,21 +24,17 @@ const navigateTo = (path) => {
 };
 
 
-
-onMounted(() => {
-  initIndex()
-  window.addEventListener('scroll', handleScroll);
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
-})
-
+const out = () => {
+  logout(() => {
+    ElMessage.success("退出登录成功")
+  })
+  router.push('/login');
+}
 </script>
 
 <template>
   <div class="common-layout">
-    <el-container style="width: 100%;padding: 0;margin: 0;height: 100%">
+    <el-container>
       <el-header class="header">
         <el-menu
             :default-active="activeIndex"
@@ -103,7 +51,7 @@ onUnmounted(() => {
           <div class="search-input">
             <label style="width: 200px">
               <input class="input_index" placeholder="搜索感兴趣的帖子">
-              <img src="../assets/search.png" class="btn_pic" alt="搜索">
+              <img src="../../assets/search.png" class="btn_pic" alt="搜索">
             </label>
           </div>
           <button class="avatar"  @click="toggleAvatarForm">
@@ -119,36 +67,54 @@ onUnmounted(() => {
           </div>
         </el-menu>
       </el-header>
-      <el-container style="margin-top: 50px; ">
-        <el-main class="main">
-          <div>
-            <el-menu mode="horizontal" default-active="0">
-              <el-menu-item index="0" style="width: 100px;margin-right: 25px">推荐</el-menu-item>
-              <el-menu-item index="1">关注</el-menu-item>
-            </el-menu>
+      <el-main class="main">
+        <div class="Card">
+          <div style="height: 50%">
+
           </div>
+          <div style="height: 50%;display: flex">
+            <el-avatar class="info_avatar" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+            <div style="margin-top: 20px;height: 20px;width: 80%">
+              <div style="font-size: 20px;">username</div>
+              <div style="height: 20px;font-size: 15px;margin-top: 20px;color: grey">这个人没有任何介绍</div>
+            </div>
+            <el-button style="margin-top: 50px">编辑个人资料</el-button>
+          </div>
+        </div>
+        <div class="account_info">
+          <el-menu mode="horizontal" :default-active="1">
+            <el-menu-item index="1">我的收藏</el-menu-item>
+            <el-menu-item index="2">我发布的</el-menu-item>
+            <el-menu-item index="3">我的喜欢</el-menu-item>
+          </el-menu>
           <div>
-            <div class="topics" v-for="item in topics.topicList" :key="item.topic_id">
-              <topic :topic="item"/>
+            <div class="topics">
+              <div class="title">111</div>
+              <div class="text">222</div>
+              <div class="topic_operate">
+                <el-button text>
+                  <img src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px" alt="">点赞
+                </el-button>
+                <el-button text>
+                  <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">收藏
+                </el-button>
+                <el-button text>
+                  <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论
+                </el-button>
+              </div>
               <el-divider/>
             </div>
             <div v-if="loading">加载中...</div>
             <div v-else-if="noMoreData">没有更多数据了</div>
           </div>
-        </el-main>
-        <el-aside class="side" width="200px">这是边框</el-aside>
-      </el-container>
+        </div>
+
+      </el-main>
     </el-container>
   </div>
 </template>
 
-
 <style scoped>
-.common-layout {
-  height: 100%;
-  overflow-y: auto;
-}
-
 .header {
   width: 100%;
   position: fixed;
@@ -207,31 +173,50 @@ onUnmounted(() => {
 .avatar_form a:hover {
   background-color: gainsboro;
 }
-.main {
-  margin-left: 200px;
-  margin-right: 100px;
-}
+
+  .main{
+    height: 100%;
+    margin-top: 80px;
+    width: 70%;
+    margin-left: 13%;
+  }
+
+  .Card{
+    border: 1px solid ghostwhite;
+    background-color: ghostwhite;
+    height: 180px;
+  }
+
+  .info_avatar{
+    height: 100px;
+    width: 100px;
+  }
+
+  .account_info{
+    height: 400px;
+  }
 
 .topics {
   margin-top: 20px;
 
 }
 
-
-
-.side {
-  border: 1px solid gainsboro;
-  margin-right: 50px;
-  width: 20%;
-  height: 200px;
-  margin-top: 20px;
+.title {
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.el-menu--horizontal > .el-menu-item:nth-child(1) {
-  margin-right: auto;
+.text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  font-weight: 20;
 }
 
-:deep(.el-divider--horizontal){
-  margin: 10px 0;
+.topic_operate{
+  margin-top: 10px;
 }
+
 </style>

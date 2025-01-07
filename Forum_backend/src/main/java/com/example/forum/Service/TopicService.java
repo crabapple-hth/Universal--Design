@@ -9,4 +9,7 @@ import java.util.List;
 
 public interface TopicService extends IService<Topic> {
     public HashMap<String,List> getTopics(int current);
+    public List<Boolean> getTopicLikeCollect(int topicId,int userId);
+    public String changeLike(int topicId,int userId,int like);
+    public String changeCollect(int topicId,int userId,int collect);
 }
