@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.Dto.TopicCollect;
 import com.example.forum.Entity.Dto.TopicLike;
+import com.example.forum.Entity.Dto.UserCollects;
 import com.example.forum.Mapper.TopicCollectMapper;
 import com.example.forum.Mapper.TopicLikeMapper;
 import com.example.forum.Mapper.TopicMapper;
@@ -78,6 +79,25 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         }
         return null;
     }
+
+    @Override
+    public List<UserCollects> getCollects(int userId) {
+        return mapper.selectCollectsByUserId(userId);
+    }
+
+    @Override
+    public List<UserCollects> getLikes(int userId) {
+        System.out.println(mapper.selectLikesByUserId(userId));
+        return mapper.selectLikesByUserId(userId);
+    }
+
+    @Override
+    public List<Topic> getMyTopics(int userId) {
+        QueryWrapper<Topic> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("user_id",userId);
+        return mapper.selectList(queryWrapper);
+    }
+
 
     public Boolean like(int topic_id,int user_id){
         QueryWrapper<TopicLike> queryWrapper=new QueryWrapper<>();

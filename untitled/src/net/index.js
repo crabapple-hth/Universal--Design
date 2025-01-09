@@ -154,4 +154,30 @@ function changeCollect(topicId,collect,success){
     })
 }
 
-export {login,logout,getCode,register,getTopics,getTopicLikeCollect,changeLike,changeCollect}
+function getCollects(success){
+    internalGet(`/account/info/collectList`,{
+        'Content-Type':'application/x-www-form-urlencoded',
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>{
+        success(data)
+    })
+}
+
+function getLikes(success){
+    internalGet(`/account/info/likeList`,{
+        'Content-Type':'application/x-www-form-urlencoded',
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>{
+        success(data)
+    })
+}
+
+function getMyTopics(success){
+    internalGet(`/account/info/myTopics`,{
+        'Content-Type':'application/x-www-form-urlencoded',
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>{
+        success(data)
+    })
+}
+export {login,logout,getCode,register,getTopics,getTopicLikeCollect,changeLike,changeCollect,getCollects,getLikes,getMyTopics}

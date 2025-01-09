@@ -16,7 +16,22 @@ const router=createRouter({
         {
             path:'/account/info',
             name:'userinfo',
-            component:()=>import('@/components/UserPage/UserInfo.vue')
+            component:()=>import('@/components/UserPage/UserInfo.vue'),
+            children:[
+                {
+                    path:"collect",
+                    name:'userCollect',
+                    component:()=>import('@/components/Topic/collectTopic.vue')
+                },
+                {
+                    path:"myTopic",
+                    name:"myTopic"
+                },
+                {
+                    path:"like",
+                    name:"myLike"
+                }
+            ]
         },
         {
             path:'/account/setting',

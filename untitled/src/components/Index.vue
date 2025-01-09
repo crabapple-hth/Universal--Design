@@ -89,17 +89,18 @@ onUnmounted(() => {
     <el-container style="width: 100%;padding: 0;margin: 0;height: 100%">
       <el-header class="header">
         <el-menu
-            :default-active="activeIndex"
+            :default-active="$route.path"
             class="el-menu-demo"
             mode="horizontal"
             :ellipsis="false"
             @select="handleSelect"
+            router
         >
           <el-menu-item index="0" style="font-size: 25px;margin-right: 10px">校园论坛</el-menu-item>
-          <el-menu-item index="1">首页</el-menu-item>
-          <el-menu-item index="2">第一组</el-menu-item>
-          <el-menu-item index="3">第二组</el-menu-item>
-          <el-menu-item index="4">第三组</el-menu-item>
+          <el-menu-item index="/index" >首页</el-menu-item>
+          <el-menu-item index="/login">第一组</el-menu-item>
+          <el-menu-item index="/">第二组</el-menu-item>
+          <el-menu-item index="/">第三组</el-menu-item>
           <div class="search-input">
             <label style="width: 200px">
               <input class="input_index" placeholder="搜索感兴趣的帖子">
@@ -128,12 +129,14 @@ onUnmounted(() => {
             </el-menu>
           </div>
           <div>
-            <div class="topics" v-for="item in topics.topicList" :key="item.topic_id">
-              <topic :topic="item"/>
-              <el-divider/>
-            </div>
-            <div v-if="loading">加载中...</div>
-            <div v-else-if="noMoreData">没有更多数据了</div>
+            <router-view>
+              <div class="topics" v-for="item in topics.topicList" :key="item.topicId">
+                <topic :topic="item"/>
+                <el-divider/>
+              </div>
+              <div v-if="loading">加载中...</div>
+              <div v-else-if="noMoreData">没有更多数据了</div>
+            </router-view>
           </div>
         </el-main>
         <el-aside class="side" width="200px">这是边框</el-aside>

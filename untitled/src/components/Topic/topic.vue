@@ -18,21 +18,21 @@ const props=defineProps({
 })
 
 const like=()=>{
-  changeLike(props.topic.topic_id,Number(isLike.value),()=>{
+  changeLike(props.topic.topicId,Number(isLike.value),()=>{
     ElMessage.success("点赞")
     isLike.value=!isLike.value;
   })
 }
 
 const collect=()=>{
-  changeCollect(props.topic.topic_id,Number(isCollect.value),()=>{
+  changeCollect(props.topic.topicId,Number(isCollect.value),()=>{
     ElMessage.success("收藏")
     isCollect.value=!isCollect.value
   })
 }
 
 onMounted(()=>{
-  getTopicLikeCollect(props.topic.topic_id,(data)=>{
+  getTopicLikeCollect(props.topic.topicId,(data)=>{
     console.log(data)
     isLike.value=data[0]
     isCollect.value=data[1]

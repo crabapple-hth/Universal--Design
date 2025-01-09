@@ -2,12 +2,18 @@
 import {logout} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 import router from "@/router/index.js";
-import {ref} from "vue";
+import {ref,watch,reactive,shallowRef} from "vue";
+import collectTopic from "@/components/Topic/collectTopic.vue";
+import myTopic from "@/components/Topic/myTopic.vue"
+import likeTopic from "@/components/Topic/likeTopic.vue"
+import {useRoute} from "vue-router";
 
 const avatar_form = ref(false)
 const activeIndex = ref('1')
 const loading = ref(false);
 const noMoreData = ref(false);
+const comp=shallowRef(myTopic)
+const route=useRoute()
 
 const handleSelect = (key, keyPath) => {
   console.log(key, keyPath)
@@ -23,6 +29,11 @@ const navigateTo = (path) => {
   router.push(path);
 };
 
+watch(()=>route,(newValue,oldValue)=>{
+  if (newValue.path==="/account/info/like") comp.value=likeTopic
+  if (newValue.path==="/account/info/collect") comp.value=collectTopic
+  if (newValue.path==="/account/info/myTopic") comp.value=myTopic
+},{deep:true,immediate:true})
 
 const out = () => {
   logout(() => {
@@ -82,30 +93,33 @@ const out = () => {
           </div>
         </div>
         <div class="account_info">
-          <el-menu mode="horizontal" :default-active="1">
-            <el-menu-item index="1">我的收藏</el-menu-item>
-            <el-menu-item index="2">我发布的</el-menu-item>
-            <el-menu-item index="3">我的喜欢</el-menu-item>
+          <el-menu mode="horizontal" :default-active="$route.path" router>
+            <el-menu-item index="/account/info/collect">我的收藏</el-menu-item>
+            <el-menu-item index="/account/info/myTopic">我发布的</el-menu-item>
+            <el-menu-item index="/account/info/like">我的喜欢</el-menu-item>
           </el-menu>
           <div>
-            <div class="topics">
-              <div class="title">111</div>
-              <div class="text">222</div>
-              <div class="topic_operate">
-                <el-button text>
-                  <img src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px" alt="">点赞
-                </el-button>
-                <el-button text>
-                  <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">收藏
-                </el-button>
-                <el-button text>
-                  <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论
-                </el-button>
-              </div>
-              <el-divider/>
-            </div>
-            <div v-if="loading">加载中...</div>
-            <div v-else-if="noMoreData">没有更多数据了</div>
+            <router-view>
+              <Component :is="comp"/>
+            </router-view>
+<!--            <div class="topics">-->
+<!--              <div class="title">111</div>-->
+<!--              <div class="text">222</div>-->
+<!--              <div class="topic_operate">-->
+<!--                <el-button text>-->
+<!--                  <img src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px" alt="">点赞-->
+<!--                </el-button>-->
+<!--                <el-button text>-->
+<!--                  <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">收藏-->
+<!--                </el-button>-->
+<!--                <el-button text>-->
+<!--                  <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论-->
+<!--                </el-button>-->
+<!--              </div>-->
+<!--              <el-divider/>-->
+<!--            </div>-->
+<!--            <div v-if="loading">加载中...</div>-->
+<!--            <div v-else-if="noMoreData">没有更多数据了</div>-->
           </div>
         </div>
 
