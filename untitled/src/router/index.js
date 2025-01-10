@@ -6,7 +6,21 @@ const router=createRouter({
         {
             path:'/index',
             name:'index',
-            component:()=>import('@/components/Index.vue')
+            component:()=>import('@/components/Index.vue'),
+            children:[
+                {
+                    path: "",
+                    name: "recommend"
+                },
+                {
+                    path: "follow",
+                    name:"follow"
+                },
+                {
+                    path:"hot",
+                    name:"hot"
+                }
+            ]
         },
         {
             path:'/login',

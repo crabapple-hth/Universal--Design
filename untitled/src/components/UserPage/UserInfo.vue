@@ -102,27 +102,10 @@ const out = () => {
             <router-view>
               <Component :is="comp"/>
             </router-view>
-<!--            <div class="topics">-->
-<!--              <div class="title">111</div>-->
-<!--              <div class="text">222</div>-->
-<!--              <div class="topic_operate">-->
-<!--                <el-button text>-->
-<!--                  <img src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px" alt="">点赞-->
-<!--                </el-button>-->
-<!--                <el-button text>-->
-<!--                  <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">收藏-->
-<!--                </el-button>-->
-<!--                <el-button text>-->
-<!--                  <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论-->
-<!--                </el-button>-->
-<!--              </div>-->
-<!--              <el-divider/>-->
-<!--            </div>-->
-<!--            <div v-if="loading">加载中...</div>-->
-<!--            <div v-else-if="noMoreData">没有更多数据了</div>-->
+            <div v-if="loading">加载中...</div>
+            <div v-else-if="noMoreData">没有更多数据了</div>
           </div>
         </div>
-
       </el-main>
     </el-container>
   </div>

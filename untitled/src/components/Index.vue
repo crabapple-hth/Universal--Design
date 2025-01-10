@@ -1,44 +1,27 @@
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import {ref, reactive, onMounted, onUnmounted, shallowRef, watch} from 'vue'
 import { getTopics, logout } from '../net/index.js'
 import router from "@/router/index.js";
 import { ElMessage } from "element-plus";
-import Topic from "@/components/Topic/topic.vue";
+import recommendTopic from "@/components/Topic/recommendTopic.vue";
+import {useRoute} from "vue-router";
+import follow from "@/components/Topic/follow.vue";
+import hotTopic from "@/components/Topic/hotTopic.vue";
+import TopicEditor from "@/components/Topic/TopicEditor.vue";
 
-const page = ref(1)
-const loading = ref(false);
-const noMoreData = ref(false);
 
-
-const activeIndex = ref('1')
+const comp=shallowRef(recommendTopic)
 const avatar_form = ref(false) // 用于控制下拉菜单的显示
-const topics = reactive({
-  total: "",
-  topicList: []
-})
+const route=useRoute()
+const show=ref(false)
+
+
+const creatTopic=()=>{
+  show.value=!show.value
+}
 
 const handleSelect = (key, keyPath) => {
   console.log(key, keyPath)
-}
-
-const initIndex = () => {
-  loading.value = true;
-  getTopics(page.value, (data) => {
-    if (page.value === 1) {
-      topics.topicList = data.topics;
-      topics.total = data.total[0]
-    } else {
-      topics.topicList.push(...data.topics);
-    }
-    if (data.topics.length === 0) {
-      noMoreData.value = true
-      ElMessage.warning("已经没有更多数据了")
-    }
-    loading.value = false;
-  }, () => {
-    ElMessage.warning("出现了一些错误，请刷新页面重试")
-    loading.value = false;
-  })
 }
 
 const out = () => {
@@ -47,20 +30,6 @@ const out = () => {
   })
   router.push('/login');
 }
-
-
-const handleScroll = () => {
-  if (loading.value || noMoreData.value) return;
-
-  const scrollTop = document.documentElement.scrollTop;
-  const clientHeight = document.documentElement.clientHeight;
-  const scrollHeight = document.documentElement.scrollHeight;
-
-  if (scrollTop + clientHeight >= scrollHeight - 10) {
-    page.value++;
-    initIndex();
-  }
-};
 
 const toggleAvatarForm = () => {
   avatar_form.value = !avatar_form.value;
@@ -71,17 +40,11 @@ const navigateTo = (path) => {
   router.push(path);
 };
 
-
-
-onMounted(() => {
-  initIndex()
-  window.addEventListener('scroll', handleScroll);
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
-})
-
+watch(()=>route,(newValue,oldValue)=>{
+  if (newValue.path==="/index") comp.value=recommendTopic
+  if (newValue.path==="/index/follow") comp.value=follow
+  if (newValue.path==="/index/hot") comp.value=hotTopic
+},{deep:true,immediate:true})
 </script>
 
 <template>
@@ -98,14 +61,18 @@ onUnmounted(() => {
         >
           <el-menu-item index="0" style="font-size: 25px;margin-right: 10px">校园论坛</el-menu-item>
           <el-menu-item index="/index" >首页</el-menu-item>
-          <el-menu-item index="/login">第一组</el-menu-item>
-          <el-menu-item index="/">第二组</el-menu-item>
-          <el-menu-item index="/">第三组</el-menu-item>
+          <el-menu-item index="/login">校园动态</el-menu-item>
+          <el-menu-item index="/">跳蚤市场</el-menu-item>
+          <el-menu-item index="/">趣事闲谈</el-menu-item>
+          <el-menu-item index="/">其他</el-menu-item>
           <div class="search-input">
             <label style="width: 200px">
               <input class="input_index" placeholder="搜索感兴趣的帖子">
               <img src="../assets/search.png" class="btn_pic" alt="搜索">
             </label>
+          </div>
+          <div>
+            <el-button style="margin-top: 15px;margin-left: 20px;" type="primary" @click="creatTopic">发表帖子</el-button>
           </div>
           <button class="avatar"  @click="toggleAvatarForm">
             <el-avatar
@@ -123,24 +90,21 @@ onUnmounted(() => {
       <el-container style="margin-top: 50px; ">
         <el-main class="main">
           <div>
-            <el-menu mode="horizontal" default-active="0">
-              <el-menu-item index="0" style="width: 100px;margin-right: 25px">推荐</el-menu-item>
-              <el-menu-item index="1">关注</el-menu-item>
+            <el-menu mode="horizontal" :default-active="$route.path" router>
+              <el-menu-item index="/index" style="width: 100px;margin-right: 25px">推荐</el-menu-item>
+              <el-menu-item index="/index/follow" style="width: 100px;margin-right: 25px">关注</el-menu-item>
+              <el-menu-item index="/index/hot" style="width: 100px;margin-right: 25px">热门</el-menu-item>
             </el-menu>
           </div>
           <div>
             <router-view>
-              <div class="topics" v-for="item in topics.topicList" :key="item.topicId">
-                <topic :topic="item"/>
-                <el-divider/>
-              </div>
-              <div v-if="loading">加载中...</div>
-              <div v-else-if="noMoreData">没有更多数据了</div>
+              <component :is="comp"></component>
             </router-view>
           </div>
         </el-main>
         <el-aside class="side" width="200px">这是边框</el-aside>
       </el-container>
+      <topic-editor :show="show" @close="show=false"/>
     </el-container>
   </div>
 </template>
