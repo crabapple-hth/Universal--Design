@@ -180,4 +180,4 @@ function getMyTopics(success){
         success(data)
     })
 }
-export {login,logout,getCode,register,getTopics,getTopicLikeCollect,changeLike,changeCollect,getCollects,getLikes,getMyTopics}
+export {takeAccessToken,login,logout,getCode,register,getTopics,getTopicLikeCollect,changeLike,changeCollect,getCollects,getLikes,getMyTopics}

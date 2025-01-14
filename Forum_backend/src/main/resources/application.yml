@@ -9,8 +9,12 @@ spring:
     host: smtp.163.com
     username: htwx123qq@163.com
     password: JDaZXubxBGseN283
+  minio:
+    endpoint: http://localhost:9000
+    username: minioadmin
+    password: minioadmin
 server:
   port: 8081
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

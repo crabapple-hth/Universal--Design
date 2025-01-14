@@ -17,7 +17,7 @@ const show=ref(false)
 
 
 const creatTopic=()=>{
-  show.value=!show.value
+  show.value=true
 }
 
 const handleSelect = (key, keyPath) => {
