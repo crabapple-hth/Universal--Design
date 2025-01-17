@@ -4,9 +4,9 @@ import {Delta,Quill, QuillEditor} from "@vueup/vue-quill";
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import ImageReSize from "quill-image-resize-vue"
 import {ImageExtend,QuillWatch} from  "quill-image-super-solution-module"
-import {reactive,ref,defineEmits,defineComponent} from "vue";
+import {reactive,ref,defineEmits,defineComponent,computed} from "vue";
 import axios from "axios";
-import {takeAccessToken} from "@/net/index.js";
+import {takeAccessToken,creatTopic} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 
 
@@ -22,10 +22,29 @@ const topic=reactive({
   loading:false
 })
 
-const emit=defineEmits(['close'])
+const emit=defineEmits(['close','success'])
+
+const refEditor=ref()
+
+function initTopic(){
+  refEditor.value.setContents('','user')
+  topic.title=""
+  topic.type=null
+}
 
 Quill.register('modules/imageReSize',ImageReSize)
 Quill.register('modules/imageExtend',ImageExtend)
+
+function deltaToTex(delta){
+  if (!delta.ops) return ""
+  let str=""
+  for (let op of delta.ops) {
+    str += op.insert
+  }
+  return str.replace(/\s/g,"")
+}
+
+const contentLength=computed(()=> deltaToTex(topic.text).length)
 
 const quillOptions={
   modules: {
@@ -58,7 +77,7 @@ const quillOptions={
       accept: 'image/png, image/jpeg',
       response: (resp) => {
         if(resp.data) {
-          return axios.defaults.baseURL + '/test/' + resp.data
+          return axios.defaults.baseURL +"/images/" +resp.data
         } else {
           return null
         }
@@ -81,7 +100,15 @@ const quillOptions={
 }
 
 const submitTopic=()=>{
-  console.log(topic.text)
+  creatTopic({
+    text:topic.text,
+    title:topic.title
+  },()=>{
+    ElMessage.success("发表成功")
+    emit('success')
+  },()=>{
+    ElMessage.warning("出现了错误")
+  })
 }
 </script>
 
@@ -91,6 +118,7 @@ const submitTopic=()=>{
         :model-value="show"
         direction="btt"
         :size="655"
+        @open="initTopic"
         :close-on-click-modal="false"
         @close="emit('close')"
     >
@@ -107,16 +135,16 @@ const submitTopic=()=>{
           </el-select>
         </div>
         <div style="flex: 1">
-          <el-input placeholder="请输入帖子标题" :prefix-icon="Document"/>
+          <el-input placeholder="请输入帖子标题" :prefix-icon="Document" v-model="topic.title"/>
         </div>
       </div>
       <div style="margin-top: 15px;height: 460px;overflow: hidden" v-loading="topic.loading" element-loading-text="正在上传图片，请稍后">
         <quill-editor style="height: calc(100% - 45px)" v-model:content="topic.text"
-                      content-type="delta" :options="quillOptions"/>
+                      content-type="delta" :options="quillOptions" ref="refEditor"/>
       </div>
       <div style="display: flex;justify-content: space-between;margin-top: 10px">
         <div style="color: grey;font-size: 13px">
-          当前字数 666 （最大支持2000）
+          当前字数 {{contentLength}} （最大支持2000）
         </div>
         <div>
           <el-button type="success" @click="submitTopic" plain>立即发表</el-button>

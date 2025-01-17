@@ -7,6 +7,7 @@ import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.Dto.TopicCollect;
 import com.example.forum.Entity.Dto.TopicLike;
 import com.example.forum.Entity.Dto.UserCollects;
+import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Mapper.TopicCollectMapper;
 import com.example.forum.Mapper.TopicLikeMapper;
 import com.example.forum.Mapper.TopicMapper;
@@ -96,6 +97,20 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         QueryWrapper<Topic> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("user_id",userId);
         return mapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public String creatTopic(int userId, TopicCreatVO vo) {
+        Topic topic=new Topic();
+        topic.setTitle(vo.getTitle());
+        topic.setCreatTime(new Date());
+        topic.setUpdateTime(new Date());
+        topic.setUserId(userId);
+        topic.setText(vo.getText().toJSONString());
+        if (mapper.insert(topic)==0){
+            return "操作失败，请询问管理";
+        }
+        return null;
     }
 
 

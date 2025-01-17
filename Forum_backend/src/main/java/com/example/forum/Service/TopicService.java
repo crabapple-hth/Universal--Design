@@ -3,6 +3,7 @@ package com.example.forum.Service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.Dto.UserCollects;
+import com.example.forum.Entity.Vo.request.TopicCreatVO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,4 +17,5 @@ public interface TopicService extends IService<Topic> {
     public List<UserCollects> getCollects(int userId);
     public List<UserCollects> getLikes(int userId);
     public List<Topic> getMyTopics(int userId);
+    public String creatTopic(int userId, TopicCreatVO vo);
 }

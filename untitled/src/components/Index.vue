@@ -104,7 +104,7 @@ watch(()=>route,(newValue,oldValue)=>{
         </el-main>
         <el-aside class="side" width="200px">这是边框</el-aside>
       </el-container>
-      <topic-editor :show="show" @close="show=false"/>
+      <topic-editor :show="show" @success="show=false" @close="show=false"/>
     </el-container>
   </div>
 </template>

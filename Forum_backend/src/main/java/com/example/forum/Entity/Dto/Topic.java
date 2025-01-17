@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
 @TableName("db_topic")
 @AllArgsConstructor
+@NoArgsConstructor
 public class Topic {
     @TableField("topic_id")
     Integer topicId;

@@ -180,4 +180,13 @@ function getMyTopics(success){
         success(data)
     })
 }
-export {takeAccessToken,login,logout,getCode,register,getTopics,getTopicLikeCollect,changeLike,changeCollect,getCollects,getLikes,getMyTopics}
+
+function creatTopic(data,success,failure){
+    internalPost("/creat-topic",data,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },()=>success(),()=>failure())
+}
+export {takeAccessToken,login,logout,getCode,
+    register,getTopics,getTopicLikeCollect,
+    changeLike,changeCollect,getCollects,getLikes,
+    getMyTopics,creatTopic}
