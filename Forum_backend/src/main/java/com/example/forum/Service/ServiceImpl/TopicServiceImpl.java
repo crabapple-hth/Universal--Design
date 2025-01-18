@@ -3,16 +3,16 @@ package com.example.forum.Service.ServiceImpl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.forum.Entity.Dto.Topic;
-import com.example.forum.Entity.Dto.TopicCollect;
-import com.example.forum.Entity.Dto.TopicLike;
-import com.example.forum.Entity.Dto.UserCollects;
+import com.example.forum.Entity.Dto.*;
+import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
+import com.example.forum.Mapper.CommentMapper;
 import com.example.forum.Mapper.TopicCollectMapper;
 import com.example.forum.Mapper.TopicLikeMapper;
 import com.example.forum.Mapper.TopicMapper;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
+import net.sf.jsqlparser.statement.select.Top;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -29,6 +29,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Resource
     TopicCollectMapper collectMapper;
+
+    @Resource
+    CommentMapper commentMapper;
 
     @Override
     public HashMap<String,List> getTopics(int current) {
@@ -111,6 +114,25 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             return "操作失败，请询问管理";
         }
         return null;
+    }
+
+    @Override
+    public String creatCommend(int userId, CommentCreatVO vo) {
+        Comment comment=new Comment();
+        comment.setUid(userId);
+        comment.setTid(vo.getTid());
+        comment.setContent(vo.getContent());
+        comment.setTime(new Date());
+        comment.setQuote(vo.getQuote());
+        commentMapper.insert(comment);
+        return null;
+    }
+
+    @Override
+    public Topic getTopicById(int topicId) {
+        QueryWrapper<Topic> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("topic_id",topicId);
+        return mapper.selectOne(queryWrapper);
     }
 
 

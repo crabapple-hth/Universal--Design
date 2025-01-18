@@ -2,6 +2,7 @@
 import Topic from "@/components/Topic/topic.vue";
 import {getMyTopics} from "@/net/index.js";
 import {reactive,onMounted} from "vue";
+import router from "@/router/index.js";
 
 const topics=reactive({
   topicList:[]
@@ -12,6 +13,8 @@ const init=()=>{
     topics.topicList=data
   })
 }
+
+
 
 onMounted(()=>{
   init()

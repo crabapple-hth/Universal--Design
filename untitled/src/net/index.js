@@ -146,7 +146,7 @@ function changeLike(topicId,like,success,failure){
 }
 
 function changeCollect(topicId,collect,success){
-    internalGet(`/index/collect?topicId=${topicId}&like=${collect}`,{
+    internalGet(`/index/collect?topicId=${topicId}&collect=${collect}`,{
         'Content-Type':'application/x-www-form-urlencoded',
         'Authorization':"Bearer "+ takeAccessToken()
     },()=>{
@@ -186,7 +186,13 @@ function creatTopic(data,success,failure){
         'Authorization':"Bearer "+ takeAccessToken()
     },()=>success(),()=>failure())
 }
+
+function getTopicDetails(topicId,success,failure){
+    internalGet(`/getTopicDetails?topicId=${topicId}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data),()=>failure())
+}
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
-    getMyTopics,creatTopic}
+    getMyTopics,creatTopic,getTopicDetails}

@@ -2,6 +2,7 @@
 import {ref,onMounted} from "vue";
 import {getTopicLikeCollect,changeLike,changeCollect} from "@/net/index.js";
 import {ElMessage} from "element-plus";
+import router from "@/router/index.js";
 
 const isLike=ref(false)
 const isCollect=ref(false)
@@ -31,9 +32,13 @@ const collect=()=>{
   })
 }
 
+const getDetail=()=>{
+  const topicId=props.topic.topicId
+  router.push({name:"topicDetails",query:{tid:topicId}})
+}
+
 onMounted(()=>{
   getTopicLikeCollect(props.topic.topicId,(data)=>{
-    console.log(data)
     isLike.value=data[0]
     isCollect.value=data[1]
   })
@@ -41,9 +46,11 @@ onMounted(()=>{
 </script>
 
 <template>
-  <div>
-    <div class="title">{{ topic.title }}</div>
-    <div class="text">{{ topic.text }}</div>
+  <div >
+    <div @click="getDetail">
+      <div class="title">{{ topic.title }}</div>
+      <div class="text">{{ topic.text }}</div>
+    </div>
     <div class="topic_operate">
       <el-button text @click="like">
         <img  src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px"  alt="">{{!isLike ? "点赞" : "已点赞"}}

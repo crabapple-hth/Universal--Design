@@ -51,6 +51,11 @@ const router=createRouter({
             path:'/account/setting',
             name:'userSetting',
             component:()=>import('@/components/UserPage/Setting.vue')
+        },
+        {
+            path:"/topicDetails",
+            name:"topicDetails",
+            component:()=>import('@/components/Topic/topicDetail.vue')
         }
     ]
 })

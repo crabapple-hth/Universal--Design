@@ -179,12 +179,6 @@ watch(()=>route,(newValue,oldValue)=>{
   margin-right: 100px;
 }
 
-.topics {
-  margin-top: 20px;
-
-}
-
-
 
 .side {
   border: 1px solid gainsboro;

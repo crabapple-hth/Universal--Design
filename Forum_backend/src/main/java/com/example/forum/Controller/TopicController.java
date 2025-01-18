@@ -1,6 +1,8 @@
 package com.example.forum.Controller;
 
+import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.RestBean;
+import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
@@ -18,5 +20,17 @@ public class TopicController {
     public RestBean<Void> creatTopic(@RequestAttribute("user_id") int userId,
                                      @Valid @RequestBody TopicCreatVO vo){
         return service.creatTopic(userId,vo)==null ? RestBean.success() : RestBean.failure(400,"发帖错误");
+    }
+
+    @PostMapping("/creat-commend")
+    public RestBean<Void> creatCommend(@RequestAttribute("user_id") int userId,
+                                       @Valid @RequestBody CommentCreatVO vo){
+        return service.creatCommend(userId,vo)==null ? RestBean.success() : RestBean.failure(400,"发帖错误");
+    }
+
+    @GetMapping("/getTopicDetails")
+    public RestBean<Object> getTopicDetails(@RequestParam int topicId){
+        Topic topic=service.getTopicById(topicId);
+        return topic!=null?RestBean.success(topic):RestBean.failure(400,"请求帖子内容错误");
     }
 }
