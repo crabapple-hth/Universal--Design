@@ -7,6 +7,7 @@ import collectTopic from "@/components/Topic/collectTopic.vue";
 import myTopic from "@/components/Topic/myTopic.vue"
 import likeTopic from "@/components/Topic/likeTopic.vue"
 import {useRoute} from "vue-router";
+import {useStore} from "@/store/index.js";
 
 const avatar_form = ref(false)
 const activeIndex = ref('1')
@@ -19,6 +20,8 @@ const handleSelect = (key, keyPath) => {
   console.log(key, keyPath)
 }
 
+const store=useStore()
+
 
 const toggleAvatarForm = () => {
   avatar_form.value = !avatar_form.value;
@@ -28,6 +31,10 @@ const navigateTo = (path) => {
   avatar_form.value = false; // 关闭下拉菜单
   router.push(path);
 };
+
+const toSetting=()=>{
+  router.push("/account/setting")
+}
 
 watch(()=>route,(newValue,oldValue)=>{
   if (newValue.path==="/account/info/like") comp.value=likeTopic
@@ -84,12 +91,12 @@ const out = () => {
 
           </div>
           <div style="height: 50%;display: flex">
-            <el-avatar class="info_avatar" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+            <el-avatar class="info_avatar" :src="store.avatarUrl"></el-avatar>
             <div style="margin-top: 20px;height: 20px;width: 80%">
-              <div style="font-size: 20px;">username</div>
+              <div style="font-size: 20px;">{{store.user.username}}</div>
               <div style="height: 20px;font-size: 15px;margin-top: 20px;color: grey">这个人没有任何介绍</div>
             </div>
-            <el-button style="margin-top: 50px">编辑个人资料</el-button>
+            <el-button style="margin-top: 50px" @click="toSetting">编辑个人资料</el-button>
           </div>
         </div>
         <div class="account_info">

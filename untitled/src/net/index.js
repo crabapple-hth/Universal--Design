@@ -7,7 +7,7 @@ const authItemName="access_token"
 //默认的失败请求处理
 const defaultFailure = (message,code,url)=>{
     console.warn(`请求地址:${url},状态码:${code},错误信息:${message}`)
-    ElMessage.warning("出现了一些错误")
+    ElMessage.warning(message)
 }
 
 //默认错误请求处理
@@ -192,7 +192,46 @@ function getTopicDetails(topicId,success,failure){
         'Authorization':"Bearer "+ takeAccessToken()
     },(data)=>success(data),()=>failure())
 }
+
+function creatCommend(data,success,failure){
+    internalPost("/creat-commend",data,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },()=>success(),()=>failure())
+}
+
+function getComments(tid,success,failure){
+    internalGet(`/getComments?tid=${tid}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data),failure=>failure())
+}
+
+function getAccount(success){
+    internalGet("/account/info/details",{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+function getInfo(success){
+    internalGet("account/info/getInfo",{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+function updateInfo(data,success){
+    internalPost("/account/info/update",data,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },()=>success())
+}
+
+function isUnauthorized(){
+    return !takeAccessToken()
+}
+
+function isRoleAdmin(){
+    return takeAccessToken()?.role==='admin'
+}
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
-    getMyTopics,creatTopic,getTopicDetails}
+    getMyTopics,creatTopic,getTopicDetails,creatCommend,
+    getComments,getAccount,getInfo,updateInfo,isUnauthorized}

@@ -4,10 +4,13 @@ import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.RestBean;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
+import com.example.forum.Entity.Vo.response.CommentWithUser;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -25,12 +28,18 @@ public class TopicController {
     @PostMapping("/creat-commend")
     public RestBean<Void> creatCommend(@RequestAttribute("user_id") int userId,
                                        @Valid @RequestBody CommentCreatVO vo){
-        return service.creatCommend(userId,vo)==null ? RestBean.success() : RestBean.failure(400,"发帖错误");
+        return service.creatComment(userId,vo)==null ? RestBean.success() : RestBean.failure(400,"发帖错误");
     }
 
     @GetMapping("/getTopicDetails")
     public RestBean<Object> getTopicDetails(@RequestParam int topicId){
         Topic topic=service.getTopicById(topicId);
         return topic!=null?RestBean.success(topic):RestBean.failure(400,"请求帖子内容错误");
+    }
+
+    @GetMapping("/getComments")
+    public RestBean<Object> getComments(@RequestParam int tid){
+        List<CommentWithUser> comments=service.getComments(tid);
+        return comments!=null? RestBean.success(comments):RestBean.failure(400,"请求评论出现问题");
     }
 }

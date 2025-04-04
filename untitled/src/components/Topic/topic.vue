@@ -3,6 +3,7 @@ import {ref,onMounted} from "vue";
 import {getTopicLikeCollect,changeLike,changeCollect} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 import router from "@/router/index.js";
+import {Delta} from "@vueup/vue-quill";
 
 const isLike=ref(false)
 const isCollect=ref(false)
@@ -17,6 +18,19 @@ const props=defineProps({
     default:{}
   }
 })
+
+const delta=new Delta(JSON.parse(props.topic.text))
+
+let text = '';
+delta.ops.forEach(op => {
+  if (typeof op.insert === 'string') {
+    text += op.insert;
+  }
+});
+
+const images = delta.ops
+    .filter(op => op.insert && typeof op.insert === 'object' && op.insert.image)
+    .map(op => op.insert.image);
 
 const like=()=>{
   changeLike(props.topic.topicId,Number(isLike.value),()=>{
@@ -49,7 +63,12 @@ onMounted(()=>{
   <div >
     <div @click="getDetail">
       <div class="title">{{ topic.title }}</div>
-      <div class="text">{{ topic.text }}</div>
+      <div class="topic-profile">
+        <div  v-if="images.length>=1">
+          <el-image :src=images[0] style="width: 300px;height: 150px;margin-right: 15px"></el-image>
+        </div>
+        <div class="text">{{text}}</div>
+      </div>
     </div>
     <div class="topic_operate">
       <el-button text @click="like">
@@ -71,13 +90,19 @@ onMounted(()=>{
   font-weight: bold;
 }
 
+.topic-profile{
+  display: flex;
+}
+
 .text {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  font-weight: 20;
+  line-height: 1.5; /* 增加可读性 */
+  max-height: 6em;
 }
 
 .topic_operate{

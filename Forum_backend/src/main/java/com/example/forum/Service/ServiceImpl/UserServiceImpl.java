@@ -1,9 +1,12 @@
 package com.example.forum.Service.ServiceImpl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forum.Entity.Dto.Account;
+import com.example.forum.Entity.Vo.request.AccountInfoVO;
 import com.example.forum.Entity.Vo.request.RegisterVo;
+import com.example.forum.Mapper.AccountInfoMapper;
 import com.example.forum.Mapper.UserMapper;
 import com.example.forum.Service.UserService;
 import jakarta.annotation.Resource;
@@ -32,6 +35,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    AccountInfoMapper accountInfoMapper;
 
     @Resource
     JavaMailSender sender;
@@ -69,6 +75,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
     }
 
     @Override
+    public Account GetUserById(int uid) {
+        QueryWrapper<Account> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("user_id" ,uid);
+        return userMapper.selectOne(queryWrapper);
+    }
+
+
+
+    @Override
     public String RegisterUserByEmail(RegisterVo registerVo) {
         String code=stringRedisTemplate.opsForValue().get("RegisterEmailCode");
         if (!registerVo.getCode().equals(code)){
@@ -80,7 +95,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
         String email=registerVo.getEmail();
         String username=registerVo.getUsername();
         String password=passwordEncoder.encode(registerVo.getPassword());
-        Account account=new Account(null,username,email,password,new Date(),"user");
+        Account account=new Account(null,username,email,password,new Date(),"user",null);
         userMapper.insert(account);
         return null;
     }

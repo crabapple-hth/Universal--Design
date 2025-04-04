@@ -20,7 +20,9 @@ public class Account {
     @TableField("user_password")
     String password;
     @TableField("creat_time")
-    Date creat_time;
+    Date creatTime;
     @TableField("role")
     String role;
+    @TableField("avatar")
+    String avatar;
 }

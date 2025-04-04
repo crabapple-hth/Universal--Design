@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forum.Entity.Dto.*;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
+import com.example.forum.Entity.Vo.response.CommentWithUser;
 import com.example.forum.Mapper.CommentMapper;
 import com.example.forum.Mapper.TopicCollectMapper;
 import com.example.forum.Mapper.TopicLikeMapper;
@@ -28,10 +29,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     TopicLikeMapper likeMapper;
 
     @Resource
-    TopicCollectMapper collectMapper;
+    CommentMapper commentMapper;
 
     @Resource
-    CommentMapper commentMapper;
+    TopicCollectMapper collectMapper;
+
 
     @Override
     public HashMap<String,List> getTopics(int current) {
@@ -117,13 +119,14 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public String creatCommend(int userId, CommentCreatVO vo) {
+    public String creatComment(int userId, CommentCreatVO vo) {
         Comment comment=new Comment();
         comment.setUid(userId);
         comment.setTid(vo.getTid());
         comment.setContent(vo.getContent());
         comment.setTime(new Date());
         comment.setQuote(vo.getQuote());
+        System.out.println(comment.getContent());
         commentMapper.insert(comment);
         return null;
     }
@@ -133,6 +136,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         QueryWrapper<Topic> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("topic_id",topicId);
         return mapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public List<CommentWithUser> getComments(int tid) {
+        return commentMapper.selectCommentWithUsernameByTid(tid);
     }
 
 

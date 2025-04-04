@@ -1,6 +1,6 @@
 <script setup>
 import {ref, reactive, onMounted, onUnmounted, shallowRef, watch} from 'vue'
-import { getTopics, logout } from '../net/index.js'
+import {getAccount, getTopics, logout} from '../net/index.js'
 import router from "@/router/index.js";
 import { ElMessage } from "element-plus";
 import recommendTopic from "@/components/Topic/recommendTopic.vue";
@@ -8,7 +8,13 @@ import {useRoute} from "vue-router";
 import follow from "@/components/Topic/follow.vue";
 import hotTopic from "@/components/Topic/hotTopic.vue";
 import TopicEditor from "@/components/Topic/TopicEditor.vue";
+import {useStore} from "@/store/index.js";
 
+const store=useStore()
+getAccount((data)=>{
+  console.log(data)
+  store.user=data
+})
 
 const comp=shallowRef(recommendTopic)
 const avatar_form = ref(false) // 用于控制下拉菜单的显示
@@ -41,10 +47,14 @@ const navigateTo = (path) => {
 };
 
 watch(()=>route,(newValue,oldValue)=>{
-  if (newValue.path==="/index") comp.value=recommendTopic
-  if (newValue.path==="/index/follow") comp.value=follow
-  if (newValue.path==="/index/hot") comp.value=hotTopic
+  if (newValue.path==="/") comp.value=recommendTopic
+  if (newValue.path==="/follow") comp.value=follow
+  if (newValue.path==="/hot") comp.value=hotTopic
 },{deep:true,immediate:true})
+
+onMounted(()=>{
+
+})
 </script>
 
 <template>
@@ -60,11 +70,11 @@ watch(()=>route,(newValue,oldValue)=>{
             router
         >
           <el-menu-item index="0" style="font-size: 25px;margin-right: 10px">校园论坛</el-menu-item>
-          <el-menu-item index="/index" >首页</el-menu-item>
+          <el-menu-item index="/" >首页</el-menu-item>
           <el-menu-item index="/login">校园动态</el-menu-item>
-          <el-menu-item index="/">跳蚤市场</el-menu-item>
-          <el-menu-item index="/">趣事闲谈</el-menu-item>
-          <el-menu-item index="/">其他</el-menu-item>
+          <el-menu-item index="/market">跳蚤市场</el-menu-item>
+          <el-menu-item index="/talk">趣事闲谈</el-menu-item>
+          <el-menu-item index="/any">其他</el-menu-item>
           <div class="search-input">
             <label style="width: 200px">
               <input class="input_index" placeholder="搜索感兴趣的帖子">
@@ -76,7 +86,7 @@ watch(()=>route,(newValue,oldValue)=>{
           </div>
           <button class="avatar"  @click="toggleAvatarForm">
             <el-avatar
-                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                :src="store.avatarUrl"
             />
           </button>
           <!-- 头像下拉菜单 -->
@@ -91,9 +101,9 @@ watch(()=>route,(newValue,oldValue)=>{
         <el-main class="main">
           <div>
             <el-menu mode="horizontal" :default-active="$route.path" router>
-              <el-menu-item index="/index" style="width: 100px;margin-right: 25px">推荐</el-menu-item>
-              <el-menu-item index="/index/follow" style="width: 100px;margin-right: 25px">关注</el-menu-item>
-              <el-menu-item index="/index/hot" style="width: 100px;margin-right: 25px">热门</el-menu-item>
+              <el-menu-item index="/" style="width: 100px;margin-right: 25px">推荐</el-menu-item>
+              <el-menu-item index="/follow" style="width: 100px;margin-right: 25px">关注</el-menu-item>
+              <el-menu-item index="/hot" style="width: 100px;margin-right: 25px">热门</el-menu-item>
             </el-menu>
           </div>
           <div>

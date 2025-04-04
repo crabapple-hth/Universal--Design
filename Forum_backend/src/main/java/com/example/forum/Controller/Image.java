@@ -22,7 +22,7 @@ public class Image {
 
     @PostMapping("/topicImage")
     public RestBean<String> uploadImage(@RequestParam("file")MultipartFile file,
-                                        @RequestAttribute("user_id") int userId) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+                                        @RequestAttribute("user_id") int userId) {
         if (file.getSize() > 1024 * 1024 * 5)
             return RestBean.failure(400, "图片过大");
         try {
@@ -40,5 +40,26 @@ public class Image {
             return RestBean.failure(400,"上传出现了一些错误");
         }
 
+    }
+
+    @PostMapping("/commentImage")
+    public RestBean<String> uploadCommentImage(@RequestParam("file") MultipartFile file,
+                                               @RequestAttribute("user_id") int userId){
+        if (file.getSize() > 1024 * 1024 * 5)
+            return RestBean.failure(400, "图片过大");
+        try {
+            InputStream inputStream = file.getInputStream();
+            PutObjectArgs args = PutObjectArgs.builder()
+                    .bucket("test")
+                    .object(file.getOriginalFilename())
+                    .stream(inputStream, inputStream.available(), -1)
+                    .contentType(file.getContentType())
+                    .build();
+            client.putObject(args);
+            return RestBean.success(file.getOriginalFilename());
+        } catch (Exception e) {
+            System.out.println(e);
+            return RestBean.failure(400,"上传出现了一些错误");
+        }
     }
 }

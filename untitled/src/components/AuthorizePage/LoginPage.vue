@@ -31,7 +31,7 @@ const submitForm=async (formEl)=>{
     if(valid){
       login(ruleForm.username,ruleForm.password,1,
           (data)=>{
-            router.push("/Index")
+            router.push("/")
           })
     }else {
       console.log("error submit",filed)
