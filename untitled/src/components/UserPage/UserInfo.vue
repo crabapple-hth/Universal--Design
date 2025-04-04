@@ -74,7 +74,7 @@ const out = () => {
           </div>
           <button class="avatar"  @click="toggleAvatarForm">
             <el-avatar
-                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                :src="store.avatarUrl"
             />
           </button>
           <!-- 头像下拉菜单 -->

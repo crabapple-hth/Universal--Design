@@ -18,18 +18,23 @@ public class AccountInfoServiceImpl extends ServiceImpl<AccountInfoMapper, Accou
     @Resource
     UserMapper userMapper;
 
+    @Resource
+    AccountInfoMapper accountInfoMapper;
+
     @Override
     public Boolean updateUserInfo(int userId, AccountInfoVO vo) {
         AccountInfo accountInfo=this.getAccountInfoById(userId);
-        if (accountInfo==null || accountInfo.getUserId()==userId){
+        if (accountInfo==null || accountInfo.getUid()==userId){
             UpdateWrapper<Account> updateWrapper=new UpdateWrapper<>();
-            updateWrapper.eq("user_id",userId).set("username",vo.getUsername());
+            updateWrapper.eq("user_id",userId).set("user_name",vo.getUsername());
             userMapper.update(updateWrapper);
-            this.saveOrUpdate(new AccountInfo(userId,
+            AccountInfo Info=new AccountInfo(userId,
                     vo.getUsername(),
-                    vo.getSex(),
                     vo.getIntroduction(),
-                    vo.getBirthday()));
+                    vo.getSex(),
+                    vo.getBirthday());
+            System.out.println(Info);
+            this.saveOrUpdate(Info);
             return true;
         }
         return false;

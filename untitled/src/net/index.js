@@ -230,8 +230,14 @@ function isUnauthorized(){
 function isRoleAdmin(){
     return takeAccessToken()?.role==='admin'
 }
+
+function getAccessToken(){
+   return  {
+        'Authorization': `Bearer ${takeAccessToken()}`
+    }
+}
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
     getMyTopics,creatTopic,getTopicDetails,creatCommend,
-    getComments,getAccount,getInfo,updateInfo,isUnauthorized}
+    getComments,getAccount,getInfo,updateInfo,isUnauthorized,getAccessToken}

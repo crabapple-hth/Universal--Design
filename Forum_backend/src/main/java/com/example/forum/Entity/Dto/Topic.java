@@ -1,6 +1,7 @@
 package com.example.forum.Entity.Dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Topic {
-    @TableField("topic_id")
+    @TableId("topic_id")
     Integer topicId;
     String title;
     String text;

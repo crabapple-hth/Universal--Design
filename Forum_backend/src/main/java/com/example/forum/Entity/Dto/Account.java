@@ -1,6 +1,7 @@
 package com.example.forum.Entity.Dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.util.Date;
 @TableName("db_account")
 @AllArgsConstructor
 public class Account {
-    @TableField("user_id")
+    @TableId("user_id")
     Integer userid;
     @TableField("user_name")
     String username;

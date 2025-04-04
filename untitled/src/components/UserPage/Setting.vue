@@ -1,9 +1,11 @@
 <script setup>
 
 import {ArrowLeft} from "@element-plus/icons-vue";
-import {reactive} from "vue";
-import {getInfo, updateInfo} from "@/net/index.js";
+import {reactive,onMounted} from "vue";
+import {getAccessToken, getInfo, takeAccessToken, updateInfo} from "@/net/index.js";
 import {ElMessage} from "element-plus";
+import axios from "axios";
+import {useStore} from "@/store/index.js";
 
 
 const info=reactive({
@@ -12,6 +14,8 @@ const info=reactive({
   birthday:"",
   introduction:""
 })
+
+const store=useStore()
 
 const init=()=>{
   getInfo((data)=>{
@@ -27,6 +31,26 @@ const update=(info)=>{
     ElMessage.success("修改成功")
   })
 }
+
+function beforeAvatarUpload(rawFile) {
+  if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
+    ElMessage.error('头像只能是 JPG/PNG 格式的')
+    return false
+  } else if(rawFile.size / 1024 > 100) {
+    ElMessage.error('头像大小不能大于 100KB')
+    return false
+  }
+  return true
+}
+
+function uploadSuccess(response){
+  ElMessage.success('头像上传成功')
+  store.user.avatar = response.data
+}
+
+onMounted(()=>{
+  init()
+})
 </script>
 
 <template>
@@ -41,8 +65,13 @@ const update=(info)=>{
       </el-header>
       <el-main class="main">
         <div style="margin-top: 100px;float: left;height: 500px;margin-right: 50px">
-          <el-image class="avatar" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
-          <el-upload>
+          <el-image class="avatar" :src="store.avatarUrl"/>
+          <el-upload
+              :action="axios.defaults.baseURL + '/api/image/avatar'"
+              :headers="getAccessToken()"
+              :before-upload="beforeAvatarUpload"
+              :on-success="uploadSuccess"
+              :show-file-list="false">
             <el-button type="primary" style="width: 120px">修改头像</el-button>
           </el-upload>
         </div>
@@ -53,8 +82,8 @@ const update=(info)=>{
             </el-form-item>
             <el-form-item style="margin-top: 50px" label="性别:">
               <el-radio-group v-model="info.sex">
-                <el-radio value="male">男</el-radio>
-                <el-radio value="female">女</el-radio>
+                <el-radio value="MALE">男</el-radio>
+                <el-radio value="FEMALE">女</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item style="margin-top: 50px" label="生日">
@@ -65,10 +94,10 @@ const update=(info)=>{
               </el-col>
             </el-form-item>
             <el-form-item style="margin-top: 50px" label="个人简介">
-              <el-input v-model="info.introduction" type="textarea"/>
+              <el-input v-model="info.introduction" type="textarea" placeholder="介绍一下自己吧！"/>
             </el-form-item>
             <el-form-item style="margin-top: 50px">
-              <el-button type="primary">提交修改</el-button>
+              <el-button type="primary" @click="update(info)">提交修改</el-button>
             </el-form-item>
           </el-form>
         </div>
