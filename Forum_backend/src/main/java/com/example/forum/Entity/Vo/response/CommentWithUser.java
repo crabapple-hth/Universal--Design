@@ -13,4 +13,5 @@ public class CommentWithUser {
     Date time;
     int quote;
     String username;
+    String avatar;
 }

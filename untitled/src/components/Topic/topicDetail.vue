@@ -11,8 +11,11 @@ import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 import ImageReSize from "quill-image-resize-vue"
 import {ImageExtend,QuillWatch} from  "quill-image-super-solution-module"
 import recommend from "../Topic/recommend.vue"
+import axios from "axios";
+import {useStore} from "@/store/index.js";
 
 const route=useRoute()
+const store=useStore()
 
 const isInput=ref(false)
 
@@ -35,7 +38,9 @@ const topic=reactive({
   content:"",
   userId:"",
   creatTime:"",
-  updateTime:""
+  updateTime:"",
+  username:"",
+  avatar:""
 })
 
 const unlikeImg=ref("../../assets/点赞.png")
@@ -138,11 +143,14 @@ const init=()=>{
     topic.userId=data.userId
     topic.creatTime=data.creatTime
     topic.updateTime=data.updateTime
+    topic.username=data.username
+    topic.avatar=data.avatar
   },()=>{
     console.log("error")
   })
   getComments(topicId,(data)=>{
     comments.list=data
+    console.log(store.user)
   })
 }
 
@@ -191,11 +199,11 @@ onMounted(()=>{
         <div style="margin-top: 20px">
           <div class="writer">
             <el-avatar class="avatar"
-                       src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                       :src="axios.defaults.baseURL+'/images/'+topic.avatar"
             />
           </div>
-          <div style="height: 40%;font-weight: bold">用户名</div>
-          <div style="height: 20px;font-size: 13px">个人简介</div>
+          <div style="height: 40%;font-weight: bold">{{topic.username}}</div>
+          <div style="height: 20px;font-size: 13px">{{topic.creatTime}}</div>
         </div>
         <div
             class="content-area"
@@ -216,7 +224,7 @@ onMounted(()=>{
         </div>
         <div>
           <div class="comment_creat">
-            <img src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+            <img :src="store.avatarUrl"
                  style="width: 50px;height: 50px"/>
             <div style="width: 100%">
               <recommend :tid="topicId"/>
@@ -238,7 +246,7 @@ onMounted(()=>{
           <div class="show_comment" v-for="item in comments.list">
             <div style="margin-top: 20px">
               <div style="display: flex;align-items: center;flex-wrap: wrap">
-                <el-avatar src="#"/>
+                <el-avatar :src="axios.defaults.baseURL+'/images/'+item.avatar"/>
                 <div style="margin-left: 10px">{{item.username}}</div>
               </div>
               <div style="margin-left: 50px">{{item.content}}</div>

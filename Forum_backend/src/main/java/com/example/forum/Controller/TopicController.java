@@ -5,6 +5,7 @@ import com.example.forum.Entity.RestBean;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
+import com.example.forum.Entity.Vo.response.TopicDetails;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -33,8 +34,8 @@ public class TopicController {
 
     @GetMapping("/getTopicDetails")
     public RestBean<Object> getTopicDetails(@RequestParam int topicId){
-        Topic topic=service.getTopicById(topicId);
-        return topic!=null?RestBean.success(topic):RestBean.failure(400,"请求帖子内容错误");
+        TopicDetails topicDetails =service.getTopicById(topicId);
+        return topicDetails!=null?RestBean.success(topicDetails):RestBean.failure(400,"请求帖子内容错误");
     }
 
     @GetMapping("/getComments")

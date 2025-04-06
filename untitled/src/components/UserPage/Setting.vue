@@ -6,6 +6,7 @@ import {getAccessToken, getInfo, takeAccessToken, updateInfo} from "@/net/index.
 import {ElMessage} from "element-plus";
 import axios from "axios";
 import {useStore} from "@/store/index.js";
+import router from "@/router/index.js";
 
 
 const info=reactive({
@@ -30,6 +31,10 @@ const update=(info)=>{
   updateInfo(info,()=>{
     ElMessage.success("修改成功")
   })
+}
+
+const onBack=()=>{
+  router.back();
 }
 
 function beforeAvatarUpload(rawFile) {
@@ -57,7 +62,7 @@ onMounted(()=>{
   <div class="common-layout">
     <el-container>
       <el-header>
-        <el-page-header :icon="ArrowLeft" style="margin-top: 20px">
+        <el-page-header :icon="ArrowLeft" @back="onBack" style="margin-top: 20px">
           <template #content>
             <span class="text-large font-600 mr-3"> 个人信息编辑 </span>
           </template>

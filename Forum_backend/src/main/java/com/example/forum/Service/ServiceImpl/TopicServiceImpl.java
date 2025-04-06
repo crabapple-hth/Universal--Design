@@ -7,6 +7,7 @@ import com.example.forum.Entity.Dto.*;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
+import com.example.forum.Entity.Vo.response.TopicDetails;
 import com.example.forum.Mapper.CommentMapper;
 import com.example.forum.Mapper.TopicCollectMapper;
 import com.example.forum.Mapper.TopicLikeMapper;
@@ -132,10 +133,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public Topic getTopicById(int topicId) {
-        QueryWrapper<Topic> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("topic_id",topicId);
-        return mapper.selectOne(queryWrapper);
+    public TopicDetails getTopicById(int topicId) {
+        return mapper.selectTopicDetails(topicId).get(0);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.example.forum.Entity.Dto.UserCollects;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
+import com.example.forum.Entity.Vo.response.TopicDetails;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,6 @@ public interface TopicService extends IService<Topic> {
     public List<Topic> getMyTopics(int userId);
     public String creatTopic(int userId, TopicCreatVO vo);
     public String creatComment(int userId, CommentCreatVO vo);
-    public Topic getTopicById(int topicId);
+    public TopicDetails getTopicById(int topicId);
     public List<CommentWithUser> getComments(int tid);
 }
