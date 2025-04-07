@@ -23,5 +23,6 @@ public interface TopicService extends IService<Topic> {
     public String creatTopic(int userId, TopicCreatVO vo);
     public String creatComment(int userId, CommentCreatVO vo);
     public TopicDetails getTopicById(int topicId);
-    public List<CommentWithUser> getComments(int tid);
+    public List<CommentWithUser> getTopLevelCommentsWithReplies(int tid);
+    public List<CommentWithUser> getPagedReplies(int topCid, int pageNum, int pageSize);
 }

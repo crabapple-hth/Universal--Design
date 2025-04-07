@@ -1,5 +1,6 @@
 package com.example.forum.Entity.Dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -13,5 +14,8 @@ public class Comment {
     int tid;
     String content;
     Date time;
-    int quote;
+    @TableField("reply_cid")
+    int replyCid;
+    @TableField("top_comment_id")
+    int topCid;
 }

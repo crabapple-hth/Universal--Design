@@ -10,7 +10,7 @@ const router=createRouter({
             component:()=>import('@/components/Index.vue'),
             children:[
                 {
-                    path: "",
+                    path: "index",
                     name: "recommend"
                 },
                 {

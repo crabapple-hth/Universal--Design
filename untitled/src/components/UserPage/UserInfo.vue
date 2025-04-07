@@ -2,7 +2,7 @@
 import {logout} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 import router from "@/router/index.js";
-import {ref,watch,reactive,shallowRef} from "vue";
+import {ref, watch, reactive, shallowRef, computed} from "vue";
 import collectTopic from "@/components/Topic/collectTopic.vue";
 import myTopic from "@/components/Topic/myTopic.vue"
 import likeTopic from "@/components/Topic/likeTopic.vue"
@@ -10,7 +10,6 @@ import {useRoute} from "vue-router";
 import {useStore} from "@/store/index.js";
 
 const avatar_form = ref(false)
-const activeIndex = ref('1')
 const loading = ref(false);
 const noMoreData = ref(false);
 const comp=shallowRef(myTopic)
@@ -48,6 +47,9 @@ const out = () => {
   })
   router.push('/login');
 }
+
+const activeMenu = computed(() => route.path);
+
 </script>
 
 <template>
@@ -55,17 +57,19 @@ const out = () => {
     <el-container>
       <el-header class="header">
         <el-menu
-            :default-active="activeIndex"
+            :default-active="activeMenu"
             class="el-menu-demo"
             mode="horizontal"
             :ellipsis="false"
             @select="handleSelect"
+            router
         >
-          <el-menu-item index="0" style="font-size: 25px;margin-right: 10px">校园论坛</el-menu-item>
-          <el-menu-item index="1">首页</el-menu-item>
-          <el-menu-item index="2">第一组</el-menu-item>
-          <el-menu-item index="3">第二组</el-menu-item>
-          <el-menu-item index="4">第三组</el-menu-item>
+          <el-menu-item index="0" style="font-size: 25px; margin-right: 10px">校园论坛</el-menu-item>
+          <el-menu-item index="/index">首页</el-menu-item>
+          <el-menu-item index="/login">校园动态</el-menu-item>
+          <el-menu-item index="/market">跳蚤市场</el-menu-item>
+          <el-menu-item index="/talk">趣事闲谈</el-menu-item>
+          <el-menu-item index="/any">其他</el-menu-item>
           <div class="search-input">
             <label style="width: 200px">
               <input class="input_index" placeholder="搜索感兴趣的帖子">

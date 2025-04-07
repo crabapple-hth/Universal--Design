@@ -126,7 +126,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         comment.setTid(vo.getTid());
         comment.setContent(vo.getContent());
         comment.setTime(new Date());
-        comment.setQuote(vo.getQuote());
+        comment.setReplyCid(vo.getQuote());
         System.out.println(comment.getContent());
         commentMapper.insert(comment);
         return null;
@@ -137,9 +137,22 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         return mapper.selectTopicDetails(topicId).get(0);
     }
 
+
     @Override
-    public List<CommentWithUser> getComments(int tid) {
-        return commentMapper.selectCommentWithUsernameByTid(tid);
+    public List<CommentWithUser> getTopLevelCommentsWithReplies(int tid) {
+        List<CommentWithUser> topLevelComments = commentMapper.selectTopLevelCommentsWithUserByTid(tid);
+        for (CommentWithUser topLevelComment : topLevelComments) {
+            List<CommentWithUser> replies = commentMapper.selectFirstThreeRepliesWithUserByTopCid(topLevelComment.getCid());
+            topLevelComment.setReplies(replies);
+        }
+        System.out.println(topLevelComments);
+        return topLevelComments;
+    }
+
+    @Override
+    public List<CommentWithUser> getPagedReplies(int topCid, int pageNum, int pageSize) {
+        int offset = (pageNum - 1) * pageSize;
+        return commentMapper.selectPagedRepliesWithUserByTopCid(topCid, offset, pageSize);
     }
 
 

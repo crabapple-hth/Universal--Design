@@ -1,7 +1,15 @@
 <script setup>
 
 import {ArrowLeft, ChatLineRound, Picture} from "@element-plus/icons-vue";
-import {changeCollect, changeLike, creatCommend, getComments, getTopicDetails, takeAccessToken} from "@/net/index.js";
+import {
+  changeCollect,
+  changeLike,
+  creatCommend,
+  getComments,
+  getTopicDetails,
+  getTopicLikeCollect,
+  takeAccessToken
+} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 import {ref,onMounted,reactive} from "vue";
 import router from "@/router/index.js";
@@ -10,9 +18,10 @@ import {Delta,Quill, QuillEditor} from "@vueup/vue-quill";
 import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 import ImageReSize from "quill-image-resize-vue"
 import {ImageExtend,QuillWatch} from  "quill-image-super-solution-module"
-import recommend from "../Topic/recommend.vue"
+import recommend from "./comment.vue"
 import axios from "axios";
 import {useStore} from "@/store/index.js";
+import Recommend from "@/components/Topic/comment.vue";
 
 const route=useRoute()
 const store=useStore()
@@ -23,20 +32,10 @@ const isLike=ref(false)
 const isCollect=ref(false)
 const topicId=route.query.tid
 
-// const comment=reactive({
-//   tid:topicId,
-//   content:"",
-//   quote:-1,
-// })
-
-const comments=reactive({
-  list:[]
-})
 
 const topic=reactive({
   title:"",
   content:"",
-  userId:"",
   creatTime:"",
   updateTime:"",
   username:"",
@@ -45,62 +44,6 @@ const topic=reactive({
 
 const unlikeImg=ref("../../assets/点赞.png")
 const likeImg=ref("../../assets/点赞-1.png")
-
-// Quill.register('modules/imageReSize',ImageReSize)
-// Quill.register('modules/imageExtend',ImageExtend)
-//
-// const quillOptions={
-//   modules: {
-//     toolbar: {
-//       container: [
-//         "bold", "italic", "underline", "strike", "clean",
-//         {color: []}, {'background': []},
-//         {size: ["small", false, "large", "huge"]},
-//         {header: [1, 2, 3, 4, 5, 6, false]},
-//         {list: "ordered"}, {list: "bullet"}, {align: []},
-//         "blockquote", "code-block", "link", "image",
-//         {indent: '-1'}, {indent: '+1'}
-//       ],
-//       handlers: {
-//         'image':function (){
-//           QuillWatch.emit(this.quill.id)
-//         }
-//       }
-//     },
-//     imageReSize:{
-//       modules:[
-//         'Resize','DisplaySize'
-//       ]
-//     },
-//     imageExtend: {
-//       action:  axios.defaults.baseURL + '/api/image/topicImage',
-//       name: 'file',
-//       size: 5,
-//       loading: true,
-//       accept: 'image/png, image/jpeg',
-//       response: (resp) => {
-//         if(resp.data) {
-//           return axios.defaults.baseURL +"/images/" +resp.data
-//         } else {
-//           return null
-//         }
-//       },
-//       methods: 'POST',
-//       headers: xhr => {
-//         xhr.setRequestHeader('Authorization', 'Bearer '+takeAccessToken());
-//       },
-//       start: () => topic.uploading = true,
-//       success: () => {
-//         ElMessage.success('图片上传成功!')
-//         topic.uploading = false
-//       },
-//       error: () => {
-//         ElMessage.warning('图片上传失败，请联系管理员!')
-//         topic.uploading = false
-//       }
-//     }
-//   }
-// }
 
 const input=()=>{
   isInput.value=true
@@ -128,29 +71,19 @@ const collect=()=>{
   })
 }
 
-// const creat=()=>{
-//   creatCommend(comment,()=>{
-//     ElMessage.success("发表成功")
-//   },()=>{
-//     ElMessage.warning("出现了问题")
-//   })
-// }
 
 const init=()=>{
   getTopicDetails(topicId,(data)=>{
     topic.title=data.title
     topic.content=new Delta(JSON.parse(data.text))
     topic.userId=data.userId
-    topic.creatTime=data.creatTime
-    topic.updateTime=data.updateTime
+    topic.creatTime=data.creat_time
+    topic.updateTime=data.update_time
     topic.username=data.username
     topic.avatar=data.avatar
+    console.log(data)
   },()=>{
     console.log("error")
-  })
-  getComments(topicId,(data)=>{
-    comments.list=data
-    console.log(store.user)
   })
 }
 
@@ -176,8 +109,14 @@ function deltaToHtml(delta) {
   })
   return html
 }
+
+
 onMounted(()=>{
   init()
+  getTopicLikeCollect(topicId,(data)=>{
+    isLike.value=data[0]
+    isCollect.value=data[1]
+  })
 })
 
 </script>
@@ -203,7 +142,7 @@ onMounted(()=>{
             />
           </div>
           <div style="height: 40%;font-weight: bold">{{topic.username}}</div>
-          <div style="height: 20px;font-size: 13px">{{topic.creatTime}}</div>
+          <div style="height: 20px;font-size: 13px">{{new Date(topic.creatTime).toLocaleString()}}</div>
         </div>
         <div
             class="content-area"
@@ -223,40 +162,7 @@ onMounted(()=>{
           </el-button>
         </div>
         <div>
-          <div class="comment_creat">
-            <img :src="store.avatarUrl"
-                 style="width: 50px;height: 50px"/>
-            <div style="width: 100%">
-              <recommend :tid="topicId"/>
-<!--              <el-input size="large"-->
-<!--                        style="margin-left: 20px;width: 90%;height: 50px"-->
-<!--                        autosize-->
-<!--                        v-model="comment.content"-->
-<!--                        @focus="input"-->
-<!--                        @blur="unInput"-->
-<!--                        placeholder="文明发言；理性互动"/>-->
-
-<!--              <div style="margin-left: 20px;margin-top: 10px;display: flex;justify-content: space-between" v-show="true">-->
-<!--                <el-button type="primary" style="float: right" size="default" @click="creat" plain>发表</el-button>-->
-<!--              </div>-->
-            </div>
-          </div>
-        </div>
-        <div >
-          <div class="show_comment" v-for="item in comments.list">
-            <div style="margin-top: 20px">
-              <div style="display: flex;align-items: center;flex-wrap: wrap">
-                <el-avatar :src="axios.defaults.baseURL+'/images/'+item.avatar"/>
-                <div style="margin-left: 10px">{{item.username}}</div>
-              </div>
-              <div style="margin-left: 50px">{{item.content}}</div>
-              <div style="margin-left: 50px;display: flex;justify-content: space-between">
-                <div style="color: grey">{{item.time}}</div>
-                <el-icon><ChatLineRound /></el-icon>
-                <el-icon><ChatLineRound /></el-icon>
-              </div>
-            </div>
-          </div>
+          <comment :tid="topicId"/>
         </div>
       </el-main>
     </el-container>
@@ -267,8 +173,8 @@ onMounted(()=>{
 .header {
   width: 100%;
   position: fixed;
-  z-index: 1000;
   border: 1px solid gainsboro;
+  background: #FFFFFF;
 }
 
 .main {
@@ -305,16 +211,5 @@ onMounted(()=>{
   margin-top: 10px;
 }
 
-.comment_creat{
-  display: flex;
-  margin-top: 15px;
-  width: 100%;
-}
 
-
-.show_comment{
-  margin-top: 20px;
-  border: 1px solid gainsboro;
-  border-radius: 5px;
-}
 </style>

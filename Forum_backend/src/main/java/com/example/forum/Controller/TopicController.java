@@ -40,7 +40,7 @@ public class TopicController {
 
     @GetMapping("/getComments")
     public RestBean<Object> getComments(@RequestParam int tid){
-        List<CommentWithUser> comments=service.getComments(tid);
+        List<CommentWithUser> comments= service.getTopLevelCommentsWithReplies(tid);
         return comments!=null? RestBean.success(comments):RestBean.failure(400,"请求评论出现问题");
     }
 }
