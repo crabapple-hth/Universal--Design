@@ -11,6 +11,9 @@ export const useStore=defineStore('general',{
                 role:'',
                 avatar:null,
                 creatTime:''
+            },
+            forum:{
+                types:[]
             }
         }
     },getters:{

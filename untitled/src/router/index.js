@@ -61,6 +61,15 @@ const router=createRouter({
     ]
 })
 
+
+router.beforeEach((to, from, next) => {
+    if (to.name !== "login" && isUnauthorized()) {
+        next('/login');
+    } else {
+        next();
+    }
+});
+
 // router.beforeEach((to, from, next) => {
 //     const unauthorized = isUnauthorized()
 //     if(to.name.startsWith('/') && !unauthorized) {

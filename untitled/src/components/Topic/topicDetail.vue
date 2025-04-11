@@ -25,6 +25,7 @@ import Recommend from "@/components/Topic/comment.vue";
 
 const route=useRoute()
 const store=useStore()
+const boxShow=ref(false)
 
 const isInput=ref(false)
 
@@ -157,12 +158,12 @@ onMounted(()=>{
           <el-button text @click="collect">
             <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">{{!isCollect ? "收藏" : "已收藏"}}
           </el-button>
-          <el-button text>
+          <el-button @click="boxShow=!boxShow" text>
             <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论
           </el-button>
         </div>
         <div>
-          <comment :tid="topicId"/>
+          <comment :tid="topicId" :show="boxShow"/>
         </div>
       </el-main>
     </el-container>

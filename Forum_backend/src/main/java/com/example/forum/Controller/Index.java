@@ -22,6 +22,13 @@ public class Index {
         return topicInfo!=null ? RestBean.success(topicInfo) : RestBean.failure(400,"请求帖子失败");
     }
 
+    @GetMapping("/type-topics")
+    public RestBean<Object> getTopicsByType(@RequestParam int current,
+                                            @RequestParam int type){
+        HashMap<String,List> topicInfo=service.getTopicsByType(current,type);
+        return topicInfo!=null ? RestBean.success(topicInfo) : RestBean.failure(400,"请求帖子失败");
+    }
+
     @GetMapping("/user-like-collect")
     public RestBean<Object> getUserLikeCollect(@RequestParam int topicId
             ,@RequestAttribute("user_id") int userid){

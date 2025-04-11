@@ -127,6 +127,14 @@ function getTopics(page,success,failure){
     },()=>failure())
 }
 
+function getTopicsByType(data,success,failure){
+    internalGet(`/index/type-topics?current=${data.page}&type=${data.type}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>{
+        success(data)
+    },()=>failure)
+}
+
 function getTopicLikeCollect(topicId,success,failure){
     internalGet(`/index/user-like-collect?topicId=${topicId}`,{
         'Content-Type':'application/x-www-form-urlencoded',
@@ -236,8 +244,15 @@ function getAccessToken(){
         'Authorization': `Bearer ${takeAccessToken()}`
     }
 }
+
+function getTypeList(success){
+    internalGet("/getTypes",{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
 export {takeAccessToken,login,logout,getCode,
-    register,getTopics,getTopicLikeCollect,
+    register,getTopics,getTopicsByType,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
     getMyTopics,creatTopic,getTopicDetails,creatCommend,
-    getComments,getAccount,getInfo,updateInfo,isUnauthorized,getAccessToken}
+    getComments,getAccount,getInfo,updateInfo,isUnauthorized,
+    getAccessToken,getTypeList}

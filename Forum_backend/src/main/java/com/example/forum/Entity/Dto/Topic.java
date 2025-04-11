@@ -18,6 +18,8 @@ public class Topic {
     Integer topicId;
     String title;
     String text;
+    @TableField("type")
+    Integer type;
     @TableField("user_id")
     Integer userId;
     @TableField("creat_time")

@@ -6,7 +6,7 @@ import ImageReSize from "quill-image-resize-vue"
 import {ImageExtend,QuillWatch} from  "quill-image-super-solution-module"
 import {reactive,ref,defineEmits,defineComponent,computed} from "vue";
 import axios from "axios";
-import {takeAccessToken,creatTopic} from "@/net/index.js";
+import {takeAccessToken, creatTopic, getTypeList} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 
 
@@ -16,10 +16,11 @@ defineProps({
 })
 
 const topic=reactive({
-  type:null,
+  type:"",
   title:"",
   text:"",
-  loading:false
+  loading:false,
+  types:[]
 })
 
 const emit=defineEmits(['close','success'])
@@ -31,6 +32,8 @@ function initTopic(){
   topic.title=""
   topic.type=null
 }
+
+
 
 Quill.register('modules/imageReSize',ImageReSize)
 Quill.register('modules/imageExtend',ImageExtend)
@@ -101,6 +104,7 @@ const quillOptions={
 
 const submitTopic=()=>{
   creatTopic({
+    type:topic.type,
     text:topic.text,
     title:topic.title
   },()=>{
@@ -130,8 +134,8 @@ const submitTopic=()=>{
       </template>
       <div style="display: flex;gap: 10px">
         <div  style="width: 120px">
-          <el-select placeholder="选择帖子类型">
-            <el-option :label="111" value="111"/>
+          <el-select placeholder="选择帖子类型" v-model="topic.type">
+            <el-option v-for="item in topic.types" :key="item.id" :label="item.name" :value="item.id"/>
           </el-select>
         </div>
         <div style="flex: 1">

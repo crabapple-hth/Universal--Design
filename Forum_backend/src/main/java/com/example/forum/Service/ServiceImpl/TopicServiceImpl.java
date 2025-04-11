@@ -8,13 +8,11 @@ import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
 import com.example.forum.Entity.Vo.response.TopicDetails;
-import com.example.forum.Mapper.CommentMapper;
-import com.example.forum.Mapper.TopicCollectMapper;
-import com.example.forum.Mapper.TopicLikeMapper;
-import com.example.forum.Mapper.TopicMapper;
+import com.example.forum.Mapper.*;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
 import net.sf.jsqlparser.statement.select.Top;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,6 +23,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     @Resource
     TopicMapper mapper;
 
+    @Resource
+    TopicTypeMapper typeMapper;
 
     @Resource
     TopicLikeMapper likeMapper;
@@ -42,11 +42,28 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
         Page<Topic> page=new Page<>(current,pageSize);
         QueryWrapper<Topic> queryWrapper=new QueryWrapper<>();
+        return getStringListHashMap(page, queryWrapper);
+    }
+
+    @Override
+    public HashMap<String, List> getTopicsByType(int current, int type) {
+        int pageSize = 10;
+
+        Page<Topic> page = new Page<>(current, pageSize);
+        QueryWrapper<Topic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", type); // 添加 type 条件
+        return getStringListHashMap(page, queryWrapper);
+    }
+
+    @NotNull
+    private HashMap<String, List> getStringListHashMap(Page<Topic> page, QueryWrapper<Topic> queryWrapper) {
         Page<Topic> topics = mapper.selectPage(page, queryWrapper);
-        long total=topics.getTotal();
-        HashMap<String,List> topicInfo=new HashMap<>();
+
+        long total = topics.getTotal();
+        HashMap<String, List> topicInfo = new HashMap<>();
         topicInfo.put("total", Collections.singletonList(total));
         topicInfo.put("topics", topics.getRecords());
+
         return topicInfo;
     }
 
@@ -108,6 +125,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     @Override
     public String creatTopic(int userId, TopicCreatVO vo) {
         Topic topic=new Topic();
+        topic.setType(vo.getType());
         topic.setTitle(vo.getTitle());
         topic.setCreatTime(new Date());
         topic.setUpdateTime(new Date());
@@ -126,8 +144,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         comment.setTid(vo.getTid());
         comment.setContent(vo.getContent());
         comment.setTime(new Date());
-        comment.setReplyCid(vo.getQuote());
-        System.out.println(comment.getContent());
+        comment.setReplyCid(vo.getReply_cid());
+        comment.setTopCid(vo.getTop_comment_id());
+        System.out.println(vo);
         commentMapper.insert(comment);
         return null;
     }
@@ -145,7 +164,6 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             List<CommentWithUser> replies = commentMapper.selectFirstThreeRepliesWithUserByTopCid(topLevelComment.getCid());
             topLevelComment.setReplies(replies);
         }
-        System.out.println(topLevelComments);
         return topLevelComments;
     }
 
@@ -153,6 +171,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     public List<CommentWithUser> getPagedReplies(int topCid, int pageNum, int pageSize) {
         int offset = (pageNum - 1) * pageSize;
         return commentMapper.selectPagedRepliesWithUserByTopCid(topCid, offset, pageSize);
+    }
+
+    @Override
+    public List<TopicType> getTypeList() {
+        return typeMapper.selectList(null);
     }
 
 

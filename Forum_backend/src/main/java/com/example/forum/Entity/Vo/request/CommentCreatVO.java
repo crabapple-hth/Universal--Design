@@ -6,5 +6,6 @@ import lombok.Data;
 public class CommentCreatVO {
     int tid;
     String content;
-    int quote;
+    int reply_cid;
+    int top_comment_id;
 }

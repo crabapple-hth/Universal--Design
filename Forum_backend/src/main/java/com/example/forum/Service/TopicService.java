@@ -2,6 +2,7 @@ package com.example.forum.Service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.forum.Entity.Dto.Topic;
+import com.example.forum.Entity.Dto.TopicType;
 import com.example.forum.Entity.Dto.UserCollects;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public interface TopicService extends IService<Topic> {
     public HashMap<String,List> getTopics(int current);
+    public HashMap<String,List> getTopicsByType(int current,int type);
     public List<Boolean> getTopicLikeCollect(int topicId,int userId);
     public String changeLike(int topicId,int userId,int like);
     public String changeCollect(int topicId,int userId,int collect);
@@ -25,4 +27,5 @@ public interface TopicService extends IService<Topic> {
     public TopicDetails getTopicById(int topicId);
     public List<CommentWithUser> getTopLevelCommentsWithReplies(int tid);
     public List<CommentWithUser> getPagedReplies(int topCid, int pageNum, int pageSize);
+    public List<TopicType> getTypeList();
 }

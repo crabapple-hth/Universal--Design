@@ -1,14 +1,20 @@
 <script setup>
 
 import Topic from "@/components/Topic/topic.vue";
-import {getTopics} from "@/net/index.js";
+import {getTopics, getTopicsByType} from "@/net/index.js";
 import {ElMessage} from "element-plus";
-import {onMounted, onUnmounted, reactive, ref} from "vue";
+import {onMounted, onUnmounted, reactive, ref,watch} from "vue";
 
 const loading = ref(false);
 const noMoreData = ref(false);
 
 const page = ref(1)
+
+const props=defineProps(
+    {
+      topicType:Number,
+    }
+)
 
 const topics = reactive({
   total: "",
@@ -17,22 +23,25 @@ const topics = reactive({
 
 const initIndex = () => {
   loading.value = true;
-  getTopics(page.value, (data) => {
+  const requestFunction = props.topicType===0 ? getTopics : getTopicsByType;
+  const requestData = props.topicType===0 ? page.value : { page: page.value, type: props.topicType };
+
+  requestFunction(requestData, (data) => {
     if (page.value === 1) {
       topics.topicList = data.topics;
-      topics.total = data.total[0]
+      topics.total = data.total[0];
     } else {
       topics.topicList.push(...data.topics);
     }
     if (data.topics.length === 0) {
-      noMoreData.value = true
-      ElMessage.warning("已经没有更多数据了")
+      noMoreData.value = true;
+      ElMessage.warning("已经没有更多数据了");
     }
     loading.value = false;
   }, () => {
-    ElMessage.warning("出现了一些错误，请刷新页面重试")
+    ElMessage.warning("出现了一些错误，请刷新页面重试");
     loading.value = false;
-  })
+  });
 }
 
 const handleScroll = () => {
@@ -56,6 +65,12 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
 })
+
+
+watch(()=>props.topicType,async (newValue,OldValue)=>{
+  console.log(newValue,OldValue)
+  initIndex();
+});
 </script>
 
 <template>

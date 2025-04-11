@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class TopicCreatVO {
+    int type;
     String title;
     JSONObject text;
 }

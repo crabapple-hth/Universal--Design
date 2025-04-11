@@ -1,6 +1,7 @@
 package com.example.forum.Controller;
 
 import com.example.forum.Entity.Dto.Topic;
+import com.example.forum.Entity.Dto.TopicType;
 import com.example.forum.Entity.RestBean;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
@@ -42,5 +43,10 @@ public class TopicController {
     public RestBean<Object> getComments(@RequestParam int tid){
         List<CommentWithUser> comments= service.getTopLevelCommentsWithReplies(tid);
         return comments!=null? RestBean.success(comments):RestBean.failure(400,"请求评论出现问题");
+    }
+
+    @GetMapping("/getTypes")
+    public RestBean<List<TopicType>> getTypes(){
+        return RestBean.success(service.getTypeList());
     }
 }

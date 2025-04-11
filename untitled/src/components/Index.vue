@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, shallowRef, watch,computed } from 'vue';
-import { getAccount, getTopics, logout } from '../net/index.js';
+import {getAccount, getTopics, getTypeList, logout} from '../net/index.js';
 import router from "@/router/index.js";
 import { ElMessage } from "element-plus";
 import recommendTopic from "@/components/Topic/recommendTopic.vue";
@@ -9,18 +9,23 @@ import follow from "@/components/Topic/follow.vue";
 import hotTopic from "@/components/Topic/hotTopic.vue";
 import TopicEditor from "@/components/Topic/TopicEditor.vue";
 import { useStore } from "@/store/index.js";
+import {CollectionTag} from "@element-plus/icons-vue";
 
+
+
+const typeId=ref(0)
+const avatar_form = ref(false);
+const route = useRoute();
+const show = ref(false);
 const store = useStore();
 getAccount((data) => {
   console.log(data);
   store.user = data;
 });
 
-const comp = shallowRef(recommendTopic);
-const avatar_form = ref(false);
-const route = useRoute();
-const show = ref(false);
+getTypeList((data)=>{store.forum=data})
 
+const comp=shallowRef(recommendTopic);
 const creatTopic = () => {
   show.value = true;
 };
@@ -29,12 +34,19 @@ const handleSelect = (key, keyPath) => {
   console.log(key, keyPath);
 };
 
+const handleTypeSelect=(id)=>{
+  typeId.value = id;
+  console.log(typeId.value)
+};
+
+
 const out = () => {
   logout(() => {
     ElMessage.success("退出登录成功");
   });
   router.push('/login');
 };
+
 
 const toggleAvatarForm = () => {
   avatar_form.value = !avatar_form.value;
@@ -100,21 +112,33 @@ onMounted(() => { });
       <el-container style="margin-top: 50px">
         <el-main class="main">
           <div>
-            <el-menu mode="horizontal" :default-active="activeMenu" router>
-              <el-menu-item index="/" style="width: 100px;margin-right: 15px">推荐</el-menu-item>
-              <el-menu-item index="/follow" style="width: 100px;margin-right: 10px">关注</el-menu-item>
-              <el-menu-item index="/hot" style="width: 100px;margin-right: 15px">热门</el-menu-item>
+            <el-menu mode="horizontal"
+                     default-active="0"
+                     @select="handleTypeSelect"
+                     >
+              <el-menu-item index="0" style="width: 100px;margin-right: 15px">推荐</el-menu-item>
+              <el-menu-item :index="item.id" v-for="item in store.forum"
+                            style="width: 100px;margin-right: 15px">{{item.name}}</el-menu-item>
             </el-menu>
           </div>
           <div>
-            <router-view>
-              <component :is="comp"></component>
-            </router-view>
+            <recommend-topic :is="comp"  :topic-type="typeId"/>
           </div>
         </el-main>
         <el-aside class="side" width="200px">
-          <div>
-            公告
+          <div class="message">
+            <div style="width: 100%;display: flex" >
+              <el-icon size="25" style="width: 20px;height: 30px;margin-top: 13px">
+                <CollectionTag />
+              </el-icon>
+              <p style="width: 50px">公告</p>
+            </div>
+            <el-divider style="margin-top: 0"/>
+            <div style="font-size: 15px;color: grey;margin: 8px">此论坛是计算属性允许我们声明性地计算衍生值。然而在有些情
+              况下，我们需要在状态变化时执行一些“副作用”：例如更改 DOM，或是根据异步操作的结果去修改另一处的状态。</div>
+          </div>
+          <div style="margin-top:20px ">
+            天气
           </div>
         </el-aside>
       </el-container>
@@ -195,10 +219,8 @@ onMounted(() => { });
 
 
 .side {
-  border: 1px solid gainsboro;
   margin-right: 50px;
   width: 20%;
-  height: 200px;
   margin-top: 20px;
 }
 
@@ -208,5 +230,9 @@ onMounted(() => { });
 
 :deep(.el-divider--horizontal){
   margin: 10px 0;
+}
+
+.message{
+  border-radius: 5px;
 }
 </style>
