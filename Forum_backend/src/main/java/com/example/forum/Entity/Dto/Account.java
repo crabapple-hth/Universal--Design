@@ -3,6 +3,7 @@ package com.example.forum.Entity.Dto;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.example.forum.Entity.BaseData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import java.util.Date;
 @Data
 @TableName("db_account")
 @AllArgsConstructor
-public class Account {
+public class Account implements BaseData {
     @TableId("user_id")
     Integer userid;
     @TableField("user_name")
@@ -26,4 +27,6 @@ public class Account {
     String role;
     @TableField("avatar")
     String avatar;
+    boolean mute;
+    boolean banned;
 }

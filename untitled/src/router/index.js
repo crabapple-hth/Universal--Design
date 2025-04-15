@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
-import {isUnauthorized} from "@/net/index.js";
+import {isRoleAdmin, isUnauthorized} from "@/net/index.js";
 
 const router=createRouter({
     history:createWebHistory(),
@@ -31,7 +31,7 @@ const router=createRouter({
         {
             path:'/account/info',
             name:'userinfo',
-            component:()=>import('@/components/UserPage/UserInfo.vue'),
+            component:()=>import('@/components/UserPage/personalPage.vue'),
             children:[
                 {
                     path:"collect",
@@ -57,15 +57,41 @@ const router=createRouter({
             path:"/topicDetails",
             name:"topicDetails",
             component:()=>import('@/components/Topic/topicDetail.vue')
+        },
+        {
+            path:"/admin",
+            name:'admin',
+            component:()=>import('@/components/AdminView.vue'),
+            children:[
+                {
+                    path: '',
+                    name:'admin-welcome',
+                    component:()=>import('@/components/admin/welcomeAdmin.vue')
+                },
+                {
+                    path: 'user',
+                    name:'admin-user',
+                    component:()=>import('@/components/admin/UserAdmin.vue')
+                },
+                {
+                    path: 'forum',
+                    name:'admin-forum',
+                    component:()=>import('@/components/admin/ForumAdmin.vue')
+                }
+            ]
         }
     ]
 })
 
 
 router.beforeEach((to, from, next) => {
+    const admin=isRoleAdmin()
     if (to.name !== "login" && isUnauthorized()) {
         next('/login');
-    } else {
+    }else if(to.fullPath.startsWith('/admin') && !admin){
+        next('index')
+    }
+    else {
         next();
     }
 });

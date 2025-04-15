@@ -29,9 +29,27 @@ function takeAccessToken(){
     return authObj.token
 }
 
+
+//获取角色
+function takeAccessRole(){
+    const str=localStorage.getItem(authItemName) ||sessionStorage.getItem(authItemName)
+    if(!str) return null;
+    const authObj=JSON.parse(str)
+    if(authObj.expire <= new Date()){
+        deleteAccessToken()
+        ElMessage.warning("登录状态已过期")
+        return null
+    }
+    return authObj.role
+}
+
 //将token存储到本地
-function storeAccessToken(remember,token,expire){
-    const authObj={token:token,expire:expire}
+function storeAccessToken(remember,token,expire,role){
+    const authObj={
+        token,
+        role,
+        expire,
+    }
     const str=JSON.stringify(authObj)
     if (remember)
         localStorage.setItem(authItemName,str)
@@ -57,14 +75,14 @@ function internalPost(url,data,header,success,failure,error=defaultError){
 }
 
 //get请求封装
-function internalGet(url,header,success,failure,error=defaultError){
-    axios.get(url,{headers:header}).then(({data})=>{
-        if (data.code===200){
+function internalGet(url, headers, success, failure, error = defaultError){
+    axios.get(url, { headers: headers }).then(({data}) => {
+        if(data.code === 200) {
             success(data.data)
         }else {
-            failure(data.message,data.code,url)
+            failure(data.message, data.code, url)
         }
-    }).catch(err =>error(err))
+    }).catch(err => error(err))
 }
 
 //登录请求
@@ -75,9 +93,9 @@ function login(username,password,remember,success,failure=defaultFailure){
     },{
         'Content-Type':'application/x-www-form-urlencoded'
     },(data)=>{
-        storeAccessToken(remember,data.token,data.expired)
+        storeAccessToken(remember,data.token,data.expire,data.role)
         ElMessage.success(`登录成功，欢迎${data.username}`)
-        success(data)
+        success()
     },failure)
 }
 
@@ -216,7 +234,7 @@ function getComments(tid,success,failure){
 function getAccount(success){
     internalGet("/account/info/details",{
         'Authorization':"Bearer "+ takeAccessToken()
-    },(data)=>success(data))
+    },(data)=>success(data),(err)=>{console.log(err)})
 }
 
 function getInfo(success){
@@ -236,7 +254,7 @@ function isUnauthorized(){
 }
 
 function isRoleAdmin(){
-    return takeAccessToken()?.role==='admin'
+    return takeAccessRole() ==='admin'
 }
 
 function getAccessToken(){
@@ -248,11 +266,32 @@ function getAccessToken(){
 function getTypeList(success){
     internalGet("/getTypes",{
         'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data),(err)=>{console.log(err)})
+}
+
+function apiUserList(page,size,success){
+    internalGet(`/api/admin/user/list?page=${page}&size=${size}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
     },(data)=>success(data))
 }
+
+
+function apiUserDetailTotal(id,success){
+    internalGet(`/api/admin/user/detail?id=${id}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+function apiUserSave(temp,success){
+    internalPost('/api/admin/user/save',temp,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },success)
+}
+
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicsByType,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
     getMyTopics,creatTopic,getTopicDetails,creatCommend,
     getComments,getAccount,getInfo,updateInfo,isUnauthorized,
-    getAccessToken,getTypeList}
+    getAccessToken,getTypeList,isRoleAdmin,apiUserList,apiUserDetailTotal,
+    apiUserSave}

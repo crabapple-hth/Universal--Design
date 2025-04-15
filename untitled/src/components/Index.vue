@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, shallowRef, watch,computed } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, shallowRef, watch,computed ,inject} from 'vue';
 import {getAccount, getTopics, getTypeList, logout} from '../net/index.js';
 import router from "@/router/index.js";
 import { ElMessage } from "element-plus";
@@ -10,6 +10,7 @@ import hotTopic from "@/components/Topic/hotTopic.vue";
 import TopicEditor from "@/components/Topic/TopicEditor.vue";
 import { useStore } from "@/store/index.js";
 import {CollectionTag} from "@element-plus/icons-vue";
+import UserInfo from "@/components/Topic/userInfo.vue";
 
 
 
@@ -18,12 +19,9 @@ const avatar_form = ref(false);
 const route = useRoute();
 const show = ref(false);
 const store = useStore();
-getAccount((data) => {
-  console.log(data);
-  store.user = data;
-});
+const loading=inject("userLoading")
 
-getTypeList((data)=>{store.forum=data})
+getTypeList((data)=>{store.forum.types=data})
 
 const comp=shallowRef(recommendTopic);
 const creatTopic = () => {
@@ -73,7 +71,7 @@ onMounted(() => { });
 </script>
 
 <template>
-  <div class="common-layout">
+  <div class="common-layout" v-loading="loading" element-loading-text="正在进入，请稍候....">
     <el-container style="width: 100%; padding: 0; margin: 0; height: 100%">
       <el-header class="header">
         <el-menu
@@ -99,14 +97,7 @@ onMounted(() => { });
           <div>
             <el-button style="margin-top: 15px; margin-left: 20px" type="primary" @click="creatTopic">发表帖子</el-button>
           </div>
-          <button class="avatar" @click="toggleAvatarForm">
-            <el-avatar :src="store.avatarUrl" />
-          </button>
-          <div class="avatar_form" v-if="avatar_form">
-            <a @click="navigateTo('/account/info/myTopic')">我的主页</a>
-            <a @click="navigateTo('/account/setting')">设置</a>
-            <a @click="out">退出登录</a>
-          </div>
+          <user-info />
         </el-menu>
       </el-header>
       <el-container style="margin-top: 50px">

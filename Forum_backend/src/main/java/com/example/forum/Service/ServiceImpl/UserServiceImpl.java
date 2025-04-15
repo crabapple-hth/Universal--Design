@@ -95,7 +95,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
         String email=registerVo.getEmail();
         String username=registerVo.getUsername();
         String password=passwordEncoder.encode(registerVo.getPassword());
-        Account account=new Account(null,username,email,password,new Date(),"user",null);
+        Account account=new Account(null,username,email,password,new Date(),
+                "user",null,false,false);
         userMapper.insert(account);
         return null;
     }

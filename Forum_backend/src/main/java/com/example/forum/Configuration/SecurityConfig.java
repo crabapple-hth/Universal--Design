@@ -55,7 +55,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(conf->conf
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/admin/**").hasRole("admin")
+                        .anyRequest().hasAnyRole("user","admin")
                 )
                 .formLogin(conf->conf
                         .loginProcessingUrl("/api/auth/login")
@@ -93,13 +94,18 @@ public class SecurityConfig {
         } else if(exceptionOrAuthentication instanceof Authentication authentication){
             User user=(User) authentication.getPrincipal();
             Account account=mapper.selectOne(new QueryWrapper<Account>().eq("user_name",user.getUsername()));
+            if (account.isBanned()){
+                writer.write(RestBean.forbidden("登录失败，此账户已被封禁").asJSONString());
+                return;
+            }
             String jwt= JwtUtils.CreatJWT(user,account.getUserid());
             AuthorizeVo vo= new AuthorizeVo();
             BeanUtils.copyProperties(account,vo);
             vo.setToken(jwt);
+            vo.setRole(account.getRole());
             Calendar calendar=Calendar.getInstance();
             calendar.add(Calendar.HOUR,72);
-            vo.setExpired(calendar.getTime());
+            vo.setExpire(calendar.getTime());
             //不过这里需要注意，在登录成功的时候需要返回我们生成的JWT令牌，这样客户端下次访问就可以携带这个令牌了，令牌过期之后就需要重新登录才可以
             writer.write(RestBean.success(vo).asJSONString());
         }

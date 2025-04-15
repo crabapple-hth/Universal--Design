@@ -8,12 +8,15 @@ import {reactive,ref,defineEmits,defineComponent,computed} from "vue";
 import axios from "axios";
 import {takeAccessToken, creatTopic, getTypeList} from "@/net/index.js";
 import {ElMessage} from "element-plus";
+import {useStore} from "@/store/index.js";
 
 
 
 defineProps({
   show:Boolean
 })
+
+const store=useStore()
 
 const topic=reactive({
   type:"",
@@ -111,7 +114,7 @@ const submitTopic=()=>{
     ElMessage.success("发表成功")
     emit('success')
   },()=>{
-    ElMessage.warning("出现了错误")
+    ElMessage.warning("111111111")
   })
 }
 </script>
@@ -134,8 +137,8 @@ const submitTopic=()=>{
       </template>
       <div style="display: flex;gap: 10px">
         <div  style="width: 120px">
-          <el-select placeholder="选择帖子类型" v-model="topic.type">
-            <el-option v-for="item in topic.types" :key="item.id" :label="item.name" :value="item.id"/>
+          <el-select placeholder="选择帖子类型" value-key="id" v-model="topic.type">
+            <el-option v-for="item in store.forum.types" :key="item.id" :label="item.name" :value="item.id"/>
           </el-select>
         </div>
         <div style="flex: 1">

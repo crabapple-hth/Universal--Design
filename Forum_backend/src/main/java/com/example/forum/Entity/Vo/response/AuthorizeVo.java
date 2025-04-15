@@ -9,5 +9,5 @@ public class AuthorizeVo {
     String username;
     String role;
     String token;
-    Date expired;
+    Date expire;
 }

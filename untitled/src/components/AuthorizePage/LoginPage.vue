@@ -1,13 +1,15 @@
 <script setup>
 import {View} from '@element-plus/icons-vue'
-import {reactive,ref} from "vue";
+import {reactive,ref,inject} from "vue";
 import {login} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 import router from "@/router/index.js";
 import Register from "@/components/AuthorizePage/Register.vue";
+import {getUserInfo} from "@/net/api/user.js";
 
 const formRef=ref()
 const register=ref(false)
+const loading=inject("userLoading")
 
 const ruleForm=reactive({
   username:"",
@@ -30,8 +32,9 @@ const submitForm=async (formEl)=>{
   await formEl.validate((valid,filed)=>{
     if(valid){
       login(ruleForm.username,ruleForm.password,1,
-          (data)=>{
-            router.push("/")
+          ()=>{
+            getUserInfo(loading)
+            router.push("/index")
           })
     }else {
       console.log("error submit",filed)
