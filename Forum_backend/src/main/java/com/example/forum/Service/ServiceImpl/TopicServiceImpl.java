@@ -178,6 +178,29 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         return typeMapper.selectList(null);
     }
 
+    @Override
+    public String delTopic(int topicId) {
+        mapper.deleteById(topicId);
+        return null;
+    }
+
+    @Override
+    public TopicDetails updateTopic(int topicId,TopicCreatVO vo) {
+        Topic existingTopic = mapper.selectById(topicId);
+        if (existingTopic == null) {
+            return null;
+        }
+        existingTopic.setType(vo.getType());
+        existingTopic.setTitle(vo.getTitle());
+        existingTopic.setText(vo.getText().toString());
+        existingTopic.setUpdateTime(new Date()); // Update the update time
+        int rowsUpdated = mapper.updateById(existingTopic);
+        if (rowsUpdated > 0) {
+            return mapper.selectById(topicId).asViewObject(TopicDetails.class);
+        }
+        return null;
+    }
+
 
     public Boolean like(int topic_id,int user_id){
         QueryWrapper<TopicLike> queryWrapper=new QueryWrapper<>();

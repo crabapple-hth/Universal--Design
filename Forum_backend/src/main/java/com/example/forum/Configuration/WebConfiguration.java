@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -22,6 +23,11 @@ public class WebConfiguration implements WebMvcConfigurer {
                 return HandlerInterceptor.super.preHandle(request, response, handler);
             }
         });
+    }
+
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
     }
 
 }

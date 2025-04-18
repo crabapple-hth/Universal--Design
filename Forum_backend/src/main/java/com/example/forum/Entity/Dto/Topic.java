@@ -3,6 +3,7 @@ package com.example.forum.Entity.Dto;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.example.forum.Entity.BaseData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.Date;
 @TableName("db_topic")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Topic {
+public class Topic implements BaseData {
     @TableId("topic_id")
     Integer topicId;
     String title;

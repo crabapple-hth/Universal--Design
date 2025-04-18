@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, shallowRef, watch,computed ,inject} from 'vue';
-import {getAccount, getTopics, getTypeList, logout} from '../net/index.js';
+import {apiForumWeather, getAccount, getTopics, getTypeList, logout} from '../net/index.js';
 import router from "@/router/index.js";
 import { ElMessage } from "element-plus";
 import recommendTopic from "@/components/Topic/recommendTopic.vue";
@@ -9,10 +9,16 @@ import follow from "@/components/Topic/follow.vue";
 import hotTopic from "@/components/Topic/hotTopic.vue";
 import TopicEditor from "@/components/Topic/TopicEditor.vue";
 import { useStore } from "@/store/index.js";
-import {CollectionTag} from "@element-plus/icons-vue";
+import {Calendar, CollectionTag} from "@element-plus/icons-vue";
 import UserInfo from "@/components/Topic/userInfo.vue";
+import Weather from "@/components/Weather.vue";
 
-
+const weather=reactive({
+  location:{},
+  now:{},
+  hourly:[],
+  success:false
+})
 
 const typeId=ref(0)
 const avatar_form = ref(false);
@@ -54,6 +60,26 @@ const navigateTo = (path) => {
   avatar_form.value = false;
   router.push(path);
 };
+
+navigator.geolocation.getCurrentPosition(position => {
+  const longitude = position.coords.longitude
+  const latitude = position.coords.latitude
+  apiForumWeather(longitude, latitude, data => {
+    Object.assign(weather, data)
+    weather.success = true
+  })
+}, error => {
+  console.info(error)
+  ElMessage.warning('位置信息获取超时，请检测网络设置')
+  apiForumWeather(116.40529, 39.90499, data => {
+    Object.assign(weather, data)
+    weather.success = true
+  })
+}, {
+  timeout: 3000,
+  enableHighAccuracy: true
+})
+
 
 watch(
     () => route,
@@ -108,7 +134,7 @@ onMounted(() => { });
                      @select="handleTypeSelect"
                      >
               <el-menu-item index="0" style="width: 100px;margin-right: 15px">推荐</el-menu-item>
-              <el-menu-item :index="item.id" v-for="item in store.forum"
+              <el-menu-item :index="item.id" v-for="item in store.forum.types"
                             style="width: 100px;margin-right: 15px">{{item.name}}</el-menu-item>
             </el-menu>
           </div>
@@ -129,7 +155,10 @@ onMounted(() => { });
               况下，我们需要在状态变化时执行一些“副作用”：例如更改 DOM，或是根据异步操作的结果去修改另一处的状态。</div>
           </div>
           <div style="margin-top:20px ">
-            天气
+            <el-icon><Calendar/></el-icon>
+            天气信息
+            <el-divider style="margin: 10px 0"/>
+            <weather :data="weather"/>
           </div>
         </el-aside>
       </el-container>

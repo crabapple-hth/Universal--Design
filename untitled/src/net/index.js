@@ -100,12 +100,12 @@ function login(username,password,remember,success,failure=defaultFailure){
 }
 
 function logout(success,failure=defaultFailure){
-    console.log(takeAccessToken()+111)
     internalGet("/api/auth/logout",{
         'Content-Type':'application/x-www-form-urlencoded',
         'Authorization':"Bearer "+ takeAccessToken()
     },()=>{
         deleteAccessToken()
+        success()
     },failure)
 }
 
@@ -228,7 +228,7 @@ function creatCommend(data,success,failure){
 function getComments(tid,success,failure){
     internalGet(`/getComments?tid=${tid}`,{
         'Authorization':"Bearer "+ takeAccessToken()
-    },(data)=>success(data),failure=>failure())
+    },(data)=>success(data),failure)
 }
 
 function getAccount(success){
@@ -288,10 +288,22 @@ function apiUserSave(temp,success){
     },success)
 }
 
+function replyCommentList(cid,page,size,success){
+    internalGet(`/replyCommentList?cid=${cid}&pageNum=${page}&pageSize=${size}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+function apiForumWeather(longitude, latitude,success){
+    internalGet(`/weather?longitude=${longitude}&latitude=${latitude}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicsByType,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
     getMyTopics,creatTopic,getTopicDetails,creatCommend,
     getComments,getAccount,getInfo,updateInfo,isUnauthorized,
     getAccessToken,getTypeList,isRoleAdmin,apiUserList,apiUserDetailTotal,
-    apiUserSave}
+    apiUserSave,replyCommentList,apiForumWeather}

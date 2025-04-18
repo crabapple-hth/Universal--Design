@@ -179,10 +179,10 @@ onMounted(()=>{
 }
 
 .main {
-  margin-left: 350px;
+  margin-left: 20%;
   margin-top: 60px;
   border: 1px solid gainsboro;
-  width: 50%;
+  width: 60%;
 }
 
 .title{

@@ -13,6 +13,8 @@ spring:
     endpoint: http://localhost:9000
     username: minioadmin
     password: minioadmin
+  weather:
+    key: b70c46e3b04e451493a009a3cb290926
 server:
   port: 8081
 #mybatis-plus:

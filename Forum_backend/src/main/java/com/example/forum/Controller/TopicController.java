@@ -8,8 +8,10 @@ import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
 import com.example.forum.Entity.Vo.response.TopicDetails;
+import com.example.forum.Entity.Vo.response.WeatherVO;
 import com.example.forum.Service.TopicService;
 import com.example.forum.Service.UserService;
+import com.example.forum.Service.WeatherService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,16 @@ public class TopicController {
 
     @Resource
     UserService userService;
+
+    @Resource
+    WeatherService weatherService;
+
+    @GetMapping("/weather")
+    public RestBean<WeatherVO> weather(double longitude, double latitude){
+        WeatherVO vo = weatherService.fetchWeather(longitude, latitude);
+        return vo == null ?
+                RestBean.failure(400, "获取地理位置信息与天气失败，请联系管理员！") : RestBean.success(vo);
+    }
 
     @PostMapping("/creat-topic")
     public RestBean<Void> creatTopic(@RequestAttribute("user_id") int userId,
@@ -58,8 +70,18 @@ public class TopicController {
         return comments!=null? RestBean.success(comments):RestBean.failure(400,"请求评论出现问题");
     }
 
+    @GetMapping("/replyCommentList")
+    public RestBean<List<CommentWithUser>> getReplyCommentList(@RequestParam int cid,
+                                                               @RequestParam int pageNum,
+                                                               @RequestParam int pageSize){
+        List<CommentWithUser> list = service.getPagedReplies(cid,pageNum,pageSize);
+        return RestBean.success(list);
+    }
+
     @GetMapping("/getTypes")
     public RestBean<List<TopicType>> getTypes(){
         return RestBean.success(service.getTypeList());
     }
+
+
 }

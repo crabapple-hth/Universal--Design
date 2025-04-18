@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted ,onUnmounted} from 'vue';
 import EmojiPicker from 'vue3-emoji-picker'
 import 'vue3-emoji-picker/css'
-import { creatCommend, getComments } from "@/net/index.js";
+import {creatCommend, getComments, replyCommentList} from "@/net/index.js";
 import { ElMessage } from "element-plus";
 import axios from "axios";
 import { useStore } from "@/store/index.js";
@@ -12,6 +12,11 @@ const showPicker = ref(false);
 const commentText = ref();
 const comments = reactive({
   list: []
+})
+const replies=reactive({
+  show:false,
+  total:0,
+  list:[]
 })
 
 const optionsName = {
@@ -66,6 +71,29 @@ function toggleReply(item,event) {
   comment.reply_cid = item.cid;
 }
 
+
+function handleGlobalClick(event) {
+  comments.list.forEach(item => {
+    if (item.showReply) {
+      const replyBox = document.querySelector(`.son_comment[data-cid="${item.cid}"]`);
+      if (replyBox && !replyBox.contains(event.target)) {
+        item.showReply = false;
+      }
+    }
+  });
+}
+
+
+
+function lookClick(item){
+  replyCommentList(item.cid,1,5,(data)=>{
+    replies.total=data.length
+    replies.list=data
+    replies.show=!replies.show
+    console.info(data)
+  })
+}
+
 onMounted(() => {
   getComments(props.tid, (data) => {
     comments.list = data.map(item => ({ ...item, showReply: false }));
@@ -79,17 +107,6 @@ onUnmounted(() => {
   // 移除全局点击事件监听器
   document.removeEventListener('click', handleGlobalClick);
 })
-
-function handleGlobalClick(event) {
-  comments.list.forEach(item => {
-    if (item.showReply) {
-      const replyBox = document.querySelector(`.son_comment[data-cid="${item.cid}"]`);
-      if (replyBox && !replyBox.contains(event.target)) {
-        item.showReply = false;
-      }
-    }
-  });
-}
 </script>
 
 <template>
@@ -137,6 +154,12 @@ function handleGlobalClick(event) {
             </div>
           </div>
         </div>
+        <div class="clickable-text" @click="lookClick(item)" v-if="!replies.show">
+          点击查看
+        </div>
+        <div v-else class="pagination">
+          <el-pagination layout="prev, pager, next" :total=replies.total />
+        </div>
         <div class="son_comment" :data-cid="item.cid" v-if="item.showReply">
           <div class="comment_creat">
             <img :src="store.avatarUrl" style="width: 50px; height: 50px" alt="评论发表头像" />
@@ -181,5 +204,21 @@ function handleGlobalClick(event) {
   width: 100%;
   margin-left: 30px;
   display: flex;
+}
+
+.clickable-text {
+  font-size: 13px;
+  color: grey;
+  margin-left: 30px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.clickable-text:hover {
+  color: skyblue;
+}
+
+.pagination{
+  margin-left: 30px;
 }
 </style>

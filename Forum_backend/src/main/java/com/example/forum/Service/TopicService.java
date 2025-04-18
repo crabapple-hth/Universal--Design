@@ -28,4 +28,6 @@ public interface TopicService extends IService<Topic> {
     public List<CommentWithUser> getTopLevelCommentsWithReplies(int tid);
     public List<CommentWithUser> getPagedReplies(int topCid, int pageNum, int pageSize);
     public List<TopicType> getTypeList();
+    public String delTopic(int topicId);
+    public TopicDetails updateTopic(int topicId,TopicCreatVO vo);
 }

@@ -86,8 +86,8 @@ const router=createRouter({
 
 router.beforeEach((to, from, next) => {
     const admin=isRoleAdmin()
-    if (to.name !== "login" && isUnauthorized()) {
-        next('/login');
+    if (to.fullPath !== "/login" && isUnauthorized() ) {
+        next('login');
     }else if(to.fullPath.startsWith('/admin') && !admin){
         next('index')
     }
