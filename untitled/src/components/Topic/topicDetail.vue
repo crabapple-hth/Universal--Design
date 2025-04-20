@@ -18,10 +18,11 @@ import {Delta,Quill, QuillEditor} from "@vueup/vue-quill";
 import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 import ImageReSize from "quill-image-resize-vue"
 import {ImageExtend,QuillWatch} from  "quill-image-super-solution-module"
-import recommend from "./comment.vue"
+import recommend from "./commentBox.vue"
 import axios from "axios";
 import {useStore} from "@/store/index.js";
-import Recommend from "@/components/Topic/comment.vue";
+import Recommend from "@/components/Topic/commentBox.vue";
+import CommentBox from "@/components/Topic/commentBox.vue";
 
 const route=useRoute()
 const store=useStore()
@@ -40,7 +41,9 @@ const topic=reactive({
   creatTime:"",
   updateTime:"",
   username:"",
-  avatar:""
+  avatar:"",
+  likeCount:0,
+  collectCount:0
 })
 
 const unlikeImg=ref("../../assets/点赞.png")
@@ -82,6 +85,8 @@ const init=()=>{
     topic.updateTime=data.update_time
     topic.username=data.username
     topic.avatar=data.avatar
+    topic.likeCount=data.likeCount
+    topic.collectCount=data.collectCount
     console.log(data)
   },()=>{
     console.log("error")
@@ -153,17 +158,21 @@ onMounted(()=>{
         <el-divider/>
         <div class="topic_operate">
           <el-button text @click="like">
-            <img  src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px"  alt="">{{!isLike ? "点赞" : "已点赞"}}
+            <img  src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px"  alt="">
+            {{topic.likeCount}}
+            {{!isLike ? "点赞" : "已点赞"}}
           </el-button>
           <el-button text @click="collect">
-            <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">{{!isCollect ? "收藏" : "已收藏"}}
+            <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">
+            {{topic.collectCount}}
+            {{!isCollect ? "收藏" : "已收藏"}}
           </el-button>
           <el-button @click="boxShow=!boxShow" text>
             <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论
           </el-button>
         </div>
         <div>
-          <comment :tid="topicId" :show="boxShow"/>
+          <comment-box :tid="topicId" :show="boxShow"/>
         </div>
       </el-main>
     </el-container>

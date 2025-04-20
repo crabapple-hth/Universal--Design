@@ -72,10 +72,14 @@ onMounted(()=>{
     </div>
     <div class="topic_operate">
       <el-button text @click="like">
-        <img  src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px"  alt="">{{!isLike ? "点赞" : "已点赞"}}
+        <img  src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px"  alt="">
+        {{props.topic.likeCount}}
+        {{!isLike ? "点赞" : "已点赞"}}
       </el-button>
       <el-button text @click="collect">
-        <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">{{!isCollect ? "收藏" : "已收藏"}}
+        <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">
+        {{props.topic.collectCount}}
+        {{!isCollect ? "收藏" : "已收藏"}}
       </el-button>
       <el-button text>
         <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论

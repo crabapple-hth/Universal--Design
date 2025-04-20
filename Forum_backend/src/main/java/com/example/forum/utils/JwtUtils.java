@@ -17,7 +17,7 @@ import java.util.*;
 public class JwtUtils {
     private static final String jwtKey="this is user key";
 
-    private static final int expired = 72000;
+    private static final int expired = 72;
 
     public static final HashSet<String> blackList = new HashSet<>();
 
@@ -25,7 +25,7 @@ public class JwtUtils {
         Algorithm algorithm= Algorithm.HMAC256(jwtKey);
         Calendar calendar=Calendar.getInstance();
         Date now=calendar.getTime();
-        calendar.add(Calendar.SECOND,expired);
+        calendar.add(Calendar.HOUR,expired);
         return JWT.create()
                 .withJWTId(UUID.randomUUID().toString())
                 .withClaim("user_id",userid)

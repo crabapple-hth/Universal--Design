@@ -7,15 +7,17 @@ import com.example.forum.Entity.Dto.*;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
-import com.example.forum.Entity.Vo.response.TopicDetails;
+import com.example.forum.Entity.Vo.response.TopicDetailsVO;
+import com.example.forum.Entity.Vo.response.TopicPreviewVO;
 import com.example.forum.Mapper.*;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
-import net.sf.jsqlparser.statement.select.Top;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements TopicService {
@@ -38,34 +40,40 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Override
     public HashMap<String,List> getTopics(int current) {
-        int pageSize=10;
-
-        Page<Topic> page=new Page<>(current,pageSize);
-        QueryWrapper<Topic> queryWrapper=new QueryWrapper<>();
+        int pageSize = 10;
+        Page<Topic> page = new Page<>(current, pageSize);
+        QueryWrapper<Topic> queryWrapper = new QueryWrapper<>();
         return getStringListHashMap(page, queryWrapper);
     }
 
     @Override
     public HashMap<String, List> getTopicsByType(int current, int type) {
         int pageSize = 10;
-
         Page<Topic> page = new Page<>(current, pageSize);
         QueryWrapper<Topic> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("type", type); // 添加 type 条件
+        queryWrapper.eq("type", type);
         return getStringListHashMap(page, queryWrapper);
     }
 
     @NotNull
     private HashMap<String, List> getStringListHashMap(Page<Topic> page, QueryWrapper<Topic> queryWrapper) {
-        Page<Topic> topics = mapper.selectPage(page, queryWrapper);
+        Page<Topic> topicPage = mapper.selectPage(page, queryWrapper);
 
-        long total = topics.getTotal();
+        List<TopicPreviewVO> topicPreviewVOList = topicPage.getRecords().stream()
+                .map(topic -> {
+                    TopicPreviewVO vo = topic.asViewObject(TopicPreviewVO.class);
+                    vo.setLikeCount(mapper.likeCount(topic.getTopicId()));
+                    vo.setCollectCount(mapper.collectCount(topic.getTopicId()));
+                    return vo;
+                })
+                .collect(Collectors.toList());
+
         HashMap<String, List> topicInfo = new HashMap<>();
-        topicInfo.put("total", Collections.singletonList(total));
-        topicInfo.put("topics", topics.getRecords());
-
+        topicInfo.put("topics", topicPreviewVOList);
+        topicInfo.put("total", Collections.singletonList(topicPage.getTotal()));
         return topicInfo;
     }
+
 
     @Override
     public List<Boolean> getTopicLikeCollect(int topicId, int userId) {
@@ -152,8 +160,12 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public TopicDetails getTopicById(int topicId) {
-        return mapper.selectTopicDetails(topicId).get(0);
+    public TopicDetailsVO getTopicById(int topicId) {
+        TopicDetailsVO topicDetails=new TopicDetailsVO();
+        topicDetails.setLikeCount(mapper.likeCount(topicId));
+        topicDetails.setCollectCount(mapper.collectCount(topicId));
+        BeanUtils.copyProperties(mapper.selectTopicDetails(topicId).get(0),topicDetails,"likeCount","collectCount");
+        return topicDetails;
     }
 
 
@@ -185,7 +197,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public TopicDetails updateTopic(int topicId,TopicCreatVO vo) {
+    public TopicDetailsVO updateTopic(int topicId, TopicCreatVO vo) {
         Topic existingTopic = mapper.selectById(topicId);
         if (existingTopic == null) {
             return null;
@@ -196,7 +208,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         existingTopic.setUpdateTime(new Date()); // Update the update time
         int rowsUpdated = mapper.updateById(existingTopic);
         if (rowsUpdated > 0) {
-            return mapper.selectById(topicId).asViewObject(TopicDetails.class);
+            return mapper.selectById(topicId).asViewObject(TopicDetailsVO.class);
         }
         return null;
     }

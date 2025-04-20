@@ -1,21 +1,25 @@
 package com.example.forum.Entity.Vo.response;
 
+
+import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentWithUser {
-    int cid;
-    String content;
-    Date time;
+public class TopicDetailsVO {
+    Integer tid;
+    String title;
+    String text;
+    Integer type;
+    Date creatTime;
+    Date updateTime;
     String username;
     String avatar;
-    Integer replyCount;
-    List<CommentWithUser> replies;
+    Integer likeCount;
+    Integer collectCount;
 }

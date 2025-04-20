@@ -1,13 +1,12 @@
 package com.example.forum.Controller;
 
 import com.example.forum.Entity.Dto.Account;
-import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.Dto.TopicType;
 import com.example.forum.Entity.RestBean;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
-import com.example.forum.Entity.Vo.response.TopicDetails;
+import com.example.forum.Entity.Vo.response.TopicDetailsVO;
 import com.example.forum.Entity.Vo.response.WeatherVO;
 import com.example.forum.Service.TopicService;
 import com.example.forum.Service.UserService;
@@ -60,7 +59,7 @@ public class TopicController {
 
     @GetMapping("/getTopicDetails")
     public RestBean<Object> getTopicDetails(@RequestParam int topicId){
-        TopicDetails topicDetails =service.getTopicById(topicId);
+        TopicDetailsVO topicDetails =service.getTopicById(topicId);
         return topicDetails!=null?RestBean.success(topicDetails):RestBean.failure(400,"请求帖子内容错误");
     }
 
