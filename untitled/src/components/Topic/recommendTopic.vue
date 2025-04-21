@@ -35,7 +35,7 @@ const initIndex = () => {
     }
     if (data.topics.length === 0) {
       noMoreData.value = true;
-      ElMessage.warning("已经没有更多数据了");
+      ElMessage.warning("已经到底啦");
     }
     loading.value = false;
   }, () => {
@@ -79,7 +79,7 @@ watch(()=>props.topicType,async (newValue,OldValue)=>{
     <el-divider/>
   </div>
   <div v-if="loading">加载中...</div>
-  <div v-else-if="noMoreData">没有更多数据了</div>
+  <div v-else-if="noMoreData">已经到底啦</div>
 </template>
 
 <style scoped>

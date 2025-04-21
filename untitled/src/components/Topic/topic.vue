@@ -8,8 +8,10 @@ import {Delta} from "@vueup/vue-quill";
 const isLike=ref(false)
 const isCollect=ref(false)
 
-const unlikeImg=ref("../../assets/点赞.png")
-const likeImg=ref("../../assets/点赞-1.png")
+const unlikeImg=ref("src/assets/点赞.png")
+const likeImg=ref("src/assets/已点赞.png")
+const unCollectImg=ref("src/assets/收藏.png")
+const collectImg=ref("src/assets/已收藏.png")
 
 
 const props=defineProps({
@@ -72,17 +74,16 @@ onMounted(()=>{
     </div>
     <div class="topic_operate">
       <el-button text @click="like">
-        <img  src="../../assets/点赞.png" class="topic_operate_img" style="height: 20px"  alt="">
-        {{props.topic.likeCount}}
-        {{!isLike ? "点赞" : "已点赞"}}
+        <img  :src="isLike ? likeImg : unlikeImg" class="topic_operate_img" style="height: 20px"  alt="">
+        <div style="font-size: 13px;margin-left: 7px">{{props.topic.likeCount}}</div>
       </el-button>
       <el-button text @click="collect">
-        <img src="../../assets/收藏.png" class="topic_operate_img" style="height: 20px" alt="">
-        {{props.topic.collectCount}}
-        {{!isCollect ? "收藏" : "已收藏"}}
+        <img :src="isCollect ? collectImg:unCollectImg" class="topic_operate_img" style="height: 20px" alt="">
+        <div style="font-size: 13px;margin-left: 7px">{{props.topic.collectCount}}</div>
       </el-button>
       <el-button text>
-        <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论
+        <img  src="../../assets/评论.png" class="topic_operate_img"
+              style="font-size: 13px;margin-left: 7px;height: 20px" alt="">评论
       </el-button>
     </div>
   </div>

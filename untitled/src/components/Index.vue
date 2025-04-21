@@ -39,8 +39,7 @@ const handleSelect = (key, keyPath) => {
 };
 
 const handleTypeSelect=(id)=>{
-  typeId.value = id;
-  console.log(typeId.value)
+  typeId.value = Number(id);
 };
 
 
