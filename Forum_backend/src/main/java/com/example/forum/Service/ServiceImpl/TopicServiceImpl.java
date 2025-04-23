@@ -10,6 +10,7 @@ import com.example.forum.Entity.Vo.response.CommentWithUser;
 import com.example.forum.Entity.Vo.response.TopicDetailsVO;
 import com.example.forum.Entity.Vo.response.TopicPreviewVO;
 import com.example.forum.Mapper.*;
+import com.example.forum.Service.NotificationService;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,12 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Resource
     TopicCollectMapper collectMapper;
+
+    @Resource
+    UserMapper userMapper;
+
+    @Resource
+    NotificationService notificationService;
 
 
     @Override
@@ -156,6 +163,26 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         comment.setTopCid(vo.getTop_comment_id());
         System.out.println(vo);
         commentMapper.insert(comment);
+        Topic topic = baseMapper.selectById(vo.getTid());
+        Account account = userMapper.selectById(userId);
+        if(vo.getReply_cid() > 0) {
+            Comment com = commentMapper.selectById(vo.getReply_cid());
+            if(!Objects.equals(account.getUserid(), com.getUid())) {
+                notificationService.addNotification(
+                        com.getUid(),
+                        "您有新的帖子评论回复",
+                        account.getUsername()+" 回复了你发表的评论，快去看看吧！",
+                        "success", "/topicDetails?tid="+com.getTid(),new Date()
+                );
+            }
+        } else if (!Objects.equals(account.getUserid(), topic.getUserId())) {
+            notificationService.addNotification(
+                    topic.getUserId(),
+                    "您有新的帖子回复",
+                    account.getUsername()+" 回复了你发表的帖子: "+topic.getTitle()+"，快去看看吧！",
+                    "success", "/topicDetails?tid="+topic.getUserId(),new Date()
+            );
+        }
         return null;
     }
 
@@ -211,6 +238,11 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
             return mapper.selectById(topicId).asViewObject(TopicDetailsVO.class);
         }
         return null;
+    }
+
+    @Override
+    public Page<TopicDetailsVO> topicList(Page<?> page) {
+        return mapper.topicList(page);
     }
 
 

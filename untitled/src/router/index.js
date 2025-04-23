@@ -11,15 +11,13 @@ const router=createRouter({
             children:[
                 {
                     path: "index",
-                    name: "recommend"
+                    name: "recommend",
+                    component:()=>import('@/components/Topic/recommendTopic.vue')
                 },
                 {
-                    path: "follow",
-                    name:"follow"
-                },
-                {
-                    path:"hot",
-                    name:"hot"
+                    path: "actives",
+                    name: "actives",
+                    component:()=>import('@/components/ActivesView.vue')
                 }
             ]
         },

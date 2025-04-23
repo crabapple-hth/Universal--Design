@@ -27,4 +27,5 @@ public class Topic implements BaseData {
     Date creatTime;
     @TableField("update_time")
     Date updateTime;
+    Boolean top;
 }

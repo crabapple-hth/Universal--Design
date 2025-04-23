@@ -1,6 +1,14 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, shallowRef, watch,computed ,inject} from 'vue';
-import {apiForumWeather, getAccount, getTopics, getTypeList, logout} from '../net/index.js';
+import {
+  apiForumWeather,
+  apiNotificationDelete, apiNotificationDeleteAll,
+  apiNotificationList,
+  getAccount,
+  getTopics,
+  getTypeList,
+  logout
+} from '../net/index.js';
 import router from "@/router/index.js";
 import { ElMessage } from "element-plus";
 import recommendTopic from "@/components/Topic/recommendTopic.vue";
@@ -9,7 +17,7 @@ import follow from "@/components/Topic/follow.vue";
 import hotTopic from "@/components/Topic/hotTopic.vue";
 import TopicEditor from "@/components/Topic/TopicEditor.vue";
 import { useStore } from "@/store/index.js";
-import {Calendar, CollectionTag} from "@element-plus/icons-vue";
+import {Bell, Calendar, Check, CollectionTag} from "@element-plus/icons-vue";
 import UserInfo from "@/components/Topic/userInfo.vue";
 import Weather from "@/components/Weather.vue";
 
@@ -80,6 +88,25 @@ navigator.geolocation.getCurrentPosition(position => {
 })
 
 
+
+const notification = ref([])
+
+const loadNotification =
+    () => apiNotificationList((data) => notification.value = data)
+loadNotification()
+
+function confirmNotification(id, url) {
+  apiNotificationDelete(id, () => {
+    loadNotification()
+    window.open(url)
+  })
+}
+
+function deleteAllNotification() {
+  apiNotificationDeleteAll(loadNotification)
+}
+
+
 watch(
     () => route,
     (newValue, oldValue) => {
@@ -109,37 +136,58 @@ onMounted(() => { });
         >
           <el-menu-item index="0" style="font-size: 25px; margin-right: 10px">校园论坛</el-menu-item>
           <el-menu-item index="/index">首页</el-menu-item>
-          <el-menu-item index="/login">校园动态</el-menu-item>
-          <el-menu-item index="/market">跳蚤市场</el-menu-item>
-          <el-menu-item index="/talk">趣事闲谈</el-menu-item>
-          <el-menu-item index="/any">其他</el-menu-item>
+          <el-menu-item index="/actives">校园动态</el-menu-item>
           <div class="search-input">
-            <label style="width: 200px">
-              <input class="input_index" placeholder="搜索感兴趣的帖子" />
-              <img src="../assets/search.png" class="btn_pic" alt="搜索" />
-            </label>
+            <input type="text" placeholder="搜索..." style="border: none; outline: none; flex-grow: 1; padding: 5px;">
+            <button style="background: none; border: none; cursor: pointer; padding: 5px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
           </div>
           <div>
-            <el-button style="margin-top: 15px; margin-left: 20px" type="primary" @click="creatTopic">发表帖子</el-button>
+            <el-button style="margin-top: 15px; margin-left: 60px" type="primary" @click="creatTopic">发表帖子</el-button>
           </div>
-          <user-info />
+          <user-info style="margin-left:7%" >
+            <el-popover placement="bottom" :width="350" trigger="click">
+              <template #reference>
+                <el-badge is-dot :hidden="!notification.length">
+                  <div class="notification">
+                    <el-icon><Bell/></el-icon>
+                    <div style="font-size: 10px">消息</div>
+                  </div>
+                </el-badge>
+              </template>
+              <el-empty :image-size="80" description="暂时没有未读消息哦~" v-if="!notification.length"/>
+              <el-scrollbar :max-height="500" v-else>
+                <div v-for="item in notification" class="notification-item"
+                            @click="confirmNotification(item.id, item.url)">
+                  <div>
+                    <el-tag size="small" :type="item.type">消息</el-tag>&nbsp;
+                    <span style="font-weight: bold">{{item.title}}</span>
+                  </div>
+                  <el-divider style="margin: 7px 0 3px 0"/>
+                  <div style="font-size: 13px;color: grey">
+                    {{item.content}}
+                  </div>
+                </div>
+              </el-scrollbar>
+              <div style="margin-top: 10px">
+                <el-button size="small" type="info" :icon="Check" @click="deleteAllNotification"
+                           style="width: 100%" plain>清除全部未读消息</el-button>
+              </div>
+            </el-popover>
+          </user-info>
         </el-menu>
       </el-header>
       <el-container style="margin-top: 50px">
         <el-main class="main">
-          <div>
-            <el-menu mode="horizontal"
-                     default-active="0"
-                     @select="handleTypeSelect"
-                     >
-              <el-menu-item index="0" style="width: 100px;margin-right: 15px">推荐</el-menu-item>
-              <el-menu-item :index="item.id" v-for="item in store.forum.types"
-                            style="width: 100px;margin-right: 15px">{{item.name}}</el-menu-item>
-            </el-menu>
-          </div>
-          <div>
-            <recommend-topic :is="comp"  :topic-type="typeId"/>
-          </div>
+          <router-view v-slot="{Component}">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </router-view>
         </el-main>
         <el-aside class="side" width="200px">
           <div class="message">
@@ -168,32 +216,59 @@ onMounted(() => { });
 
 
 <style scoped>
+.notification-item {
+  transition: .3s;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
+}
+
+.notification {
+  font-size: 22px;
+  line-height: 14px;
+  text-align: center;
+  transition: color .3s;
+
+  &:hover {
+    color: grey;
+    cursor: pointer;
+  }
+}
+
 .common-layout {
   height: 100%;
   overflow-y: auto;
 }
 
 .header {
-  width: 100%;
+  width: 100vw;
   position: fixed;
   z-index: 1000;
 }
 
+.el-menu-demo{
+  width: 100%;
+}
+
 .search-input {
-  margin-left: 25px;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  margin-left: 15%;
   margin-top: 15px;
-  border: 1px solid grey;
-  border-radius: 15px;
-  height: 30px;
+  width: 300px;
 }
 
 .input_index {
   border-radius: 15px;
-  width: 300px;
+  width: 280px;
   height: 25px;
   outline: none;
   border: none;
-  margin-left: 10px;
 }
 
 .btn_pic {

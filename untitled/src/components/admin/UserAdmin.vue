@@ -53,6 +53,7 @@ function saveUserDetail() {
   })
 }
 
+
 watchEffect(()=> apiUserList(userTable.page,userTable.size,(data)=>{
     userTable.total=data.total
     userTable.data=data.list

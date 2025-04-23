@@ -300,10 +300,47 @@ function apiForumWeather(longitude, latitude,success){
     },(data)=>success(data))
 }
 
+function apiTopicList(page,size,success){
+    internalGet(`/api/admin/user/topicList?page=${page}&size=${size}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+function apiDelTopic(tid,success){
+    internalGet(`/api/admin/user/delete?tid=${tid}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },success)
+}
+
+function apiSetTop(tid,success){
+    internalGet(`/api/admin/user/setTop?tid=${tid}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },success)
+}
+
+function apiNotificationList(success){
+    internalGet('/api/notification/list',{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+function apiNotificationDelete(id,success){
+    internalGet(`/api/notification/delete?id=${id}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },()=>success())
+}
+
+function apiNotificationDeleteAll(success){
+    internalGet('/api/notification/delete-all',{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },()=>success())
+}
+
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicsByType,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
     getMyTopics,creatTopic,getTopicDetails,creatCommend,
     getComments,getAccount,getInfo,updateInfo,isUnauthorized,
     getAccessToken,getTypeList,isRoleAdmin,apiUserList,apiUserDetailTotal,
-    apiUserSave,replyCommentList,apiForumWeather}
+    apiUserSave,replyCommentList,apiForumWeather,apiTopicList,apiDelTopic,
+    apiSetTop,apiNotificationDelete,apiNotificationDeleteAll,apiNotificationList}

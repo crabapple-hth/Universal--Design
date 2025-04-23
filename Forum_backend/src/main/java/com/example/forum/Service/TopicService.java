@@ -1,5 +1,6 @@
 package com.example.forum.Service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.Dto.TopicType;
@@ -30,4 +31,5 @@ public interface TopicService extends IService<Topic> {
     public List<TopicType> getTypeList();
     public String delTopic(int topicId);
     public TopicDetailsVO updateTopic(int topicId, TopicCreatVO vo);
+    public Page<TopicDetailsVO> topicList(Page<?> page);
 }

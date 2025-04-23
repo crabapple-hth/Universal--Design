@@ -4,17 +4,19 @@ import Topic from "@/components/Topic/topic.vue";
 import {getTopics, getTopicsByType} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 import {onMounted, onUnmounted, reactive, ref,watch} from "vue";
+import {useStore} from "@/store/index.js";
 
 const loading = ref(false);
 const noMoreData = ref(false);
 
 const page = ref(1)
+const store=useStore()
+const typeId=ref(0)
 
-const props=defineProps(
-    {
-      topicType:Number,
-    }
-)
+
+const handleTypeSelect=(id)=>{
+  typeId.value = Number(id);
+};
 
 const topics = reactive({
   total: "",
@@ -23,8 +25,8 @@ const topics = reactive({
 
 const initIndex = () => {
   loading.value = true;
-  const requestFunction = props.topicType===0 ? getTopics : getTopicsByType;
-  const requestData = props.topicType===0 ? page.value : { page: page.value, type: props.topicType };
+  const requestFunction = typeId.value===0 ? getTopics : getTopicsByType;
+  const requestData = typeId.value===0 ? page.value : { page: page.value, type: typeId.value };
 
   requestFunction(requestData, (data) => {
     if (page.value === 1) {
@@ -67,13 +69,23 @@ onUnmounted(() => {
 })
 
 
-watch(()=>props.topicType,async (newValue,OldValue)=>{
+watch(()=>typeId.value,async (newValue,OldValue)=>{
   console.log(newValue,OldValue)
   initIndex();
 });
 </script>
 
 <template>
+  <div>
+    <el-menu mode="horizontal"
+             default-active="0"
+             @select="handleTypeSelect"
+    >
+      <el-menu-item index="0" style="width: 100px;margin-right: 15px">推荐</el-menu-item>
+      <el-menu-item :index="item.id" v-for="item in store.forum.types"
+                    style="width: 100px;margin-right: 15px">{{item.name}}</el-menu-item>
+    </el-menu>
+  </div>
   <div class="topics" v-for="item in topics.topicList" :key="item.topicId">
     <topic :topic="item"/>
     <el-divider/>

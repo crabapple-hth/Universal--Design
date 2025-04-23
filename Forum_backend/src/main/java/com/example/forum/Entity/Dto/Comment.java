@@ -1,6 +1,7 @@
 package com.example.forum.Entity.Dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ import java.util.Date;
 @Data
 @TableName("db_comment")
 public class Comment {
+    @TableId("cid")
     int cid;
     int uid;
     int tid;

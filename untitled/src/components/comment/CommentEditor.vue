@@ -43,8 +43,13 @@ const optionsName = {
 
 const creat = () => {
   comment.content = commentText.value
-  comment.reply_cid=props.commentInfo.reply_cid
-  comment.top_comment_id=props.commentInfo.top_comment_id
+  if (!props.commentInfo){
+    comment.reply_cid=-1
+    comment.top_comment_id=-1
+  }else {
+    comment.reply_cid=props.commentInfo.reply_cid;
+    comment.top_comment_id=props.commentInfo.top_comment_id
+  }
   console.log(comment)
   creatCommend(comment, () => {
     ElMessage.success("发表成功")
@@ -52,7 +57,7 @@ const creat = () => {
   }, () => {
     ElMessage.warning("出现了问题")
   })
-}
+ }
 </script>
 
 <template>
