@@ -92,7 +92,7 @@ html,body{
   padding: 0;
 }
 .login_page{
-  background: url("../../assets/background.jpg") center center no-repeat;
+  background: url("../../assets/loginImg.jpg") center center no-repeat;
   width: 100%;
   height: 100vh;
   background-size: cover;
@@ -110,7 +110,7 @@ html,body{
   border: 1px solid ghostwhite;
   width: 500px;
   height: 500px;
-  background-color: rgba(241, 234, 234, 0.76);
+  background-color: rgba(241, 234, 234,0.5);
   position: absolute;
   margin-top: 10px;
   top: 50%;  /* 将 login_form 垂直居中对齐  */

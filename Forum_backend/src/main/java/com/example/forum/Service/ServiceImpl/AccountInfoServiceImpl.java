@@ -12,6 +12,8 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class AccountInfoServiceImpl extends ServiceImpl<AccountInfoMapper, AccountInfo> implements AccountInfoService {
@@ -43,5 +45,10 @@ public class AccountInfoServiceImpl extends ServiceImpl<AccountInfoMapper, Accou
     @Override
     public AccountInfo getAccountInfoById(int userId) {
         return this.getById(userId);
+    }
+
+    @Override
+    public List<Map<String, Object>> countUsersByGender() {
+        return baseMapper.countUsersByGender();
     }
 }

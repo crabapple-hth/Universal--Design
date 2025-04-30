@@ -26,7 +26,7 @@ const adminMenu=[
     title:'校园论坛管理',icon:Location,sub:[
       {title:'用户管理',icon:User,index:'/admin/user'},
       {title:'帖子广场管理',icon:ChatDotSquare,index:'/admin/forum'},
-      {title:'校园活动管理',icon:Notification},
+      {title:'校园活动管理',icon:Notification,index:'/admin/active'},
       {title:'实物招领管理',icon:Umbrella},
       {title:'合作机构管理',icon:School},
     ]

@@ -106,7 +106,6 @@ public class SecurityConfig {
             Calendar calendar=Calendar.getInstance();
             calendar.add(Calendar.HOUR,72);
             vo.setExpire(calendar.getTime());
-            //不过这里需要注意，在登录成功的时候需要返回我们生成的JWT令牌，这样客户端下次访问就可以携带这个令牌了，令牌过期之后就需要重新登录才可以
             writer.write(RestBean.success(vo).asJSONString());
         }
     }

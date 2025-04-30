@@ -49,7 +49,7 @@ function userLogout() {
           <el-icon>
             <Operation/>
           </el-icon>
-          个人设置
+          个人中心
         </el-dropdown-item>
         <el-dropdown-item @click="router.push('/account/setting')">
           <el-icon>

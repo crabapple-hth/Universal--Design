@@ -85,6 +85,28 @@ function internalGet(url, headers, success, failure, error = defaultError){
     }).catch(err => error(err))
 }
 
+//put请求封装
+function internalPut(url, data, header, success, failure, error = defaultError) {
+    axios.put(url, data, { headers: header }).then(({data}) => {
+        if (data.code === 200) {
+            success(data.data)
+        } else {
+            failure(data.message, data.code, url)
+        }
+    }).catch(err => error(err))
+}
+
+//delete请求封装
+function internalDelete(url, header, success, failure, error = defaultError) {
+    axios.delete(url, { headers: header }).then(({data}) => {
+        if (data.code === 200) {
+            success(data.data)
+        } else {
+            failure(data.message, data.code, url)
+        }
+    }).catch(err => error(err))
+}
+
 //登录请求
 function login(username,password,remember,success,failure=defaultFailure){
     internalPost('/api/auth/login',{
@@ -336,6 +358,24 @@ function apiNotificationDeleteAll(success){
     },()=>success())
 }
 
+function apiLastSeven(success){
+    internalGet('/api/admin/user/LastSeven',{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+function apiTypesNum(success){
+    internalGet('/api/admin/user/TypeTopicNum',{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+function apiGender(success){
+    internalGet('/api/admin/user/gender/count',{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicsByType,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
@@ -343,4 +383,5 @@ export {takeAccessToken,login,logout,getCode,
     getComments,getAccount,getInfo,updateInfo,isUnauthorized,
     getAccessToken,getTypeList,isRoleAdmin,apiUserList,apiUserDetailTotal,
     apiUserSave,replyCommentList,apiForumWeather,apiTopicList,apiDelTopic,
-    apiSetTop,apiNotificationDelete,apiNotificationDeleteAll,apiNotificationList}
+    apiSetTop,apiNotificationDelete,apiNotificationDeleteAll,apiNotificationList,
+    internalGet,internalPost,internalPut,internalDelete,apiLastSeven,apiGender,apiTypesNum}

@@ -12,6 +12,7 @@ import com.example.forum.Entity.Vo.response.TopicDetailsVO;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public interface TopicService extends IService<Topic> {
@@ -32,4 +33,7 @@ public interface TopicService extends IService<Topic> {
     public String delTopic(int topicId);
     public TopicDetailsVO updateTopic(int topicId, TopicCreatVO vo);
     public Page<TopicDetailsVO> topicList(Page<?> page);
+    Integer countTodayTopics();
+    List<Map<String, Object>> countTopicsByType();
+    List<Map<String, Object>> countLastSevenDaysTopics();
 }

@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/account/info")
-public class accountInfo {
+public class AccountInfo {
     @Resource
     TopicServiceImpl service;
 

@@ -8,6 +8,7 @@ const router=createRouter({
             path:'/',
             name:'index',
             component:()=>import('@/components/Index.vue'),
+            redirect: '/index',
             children:[
                 {
                     path: "index",
@@ -17,7 +18,14 @@ const router=createRouter({
                 {
                     path: "actives",
                     name: "actives",
-                    component:()=>import('@/components/ActivesView.vue')
+                    component:()=>import('@/components/ActivesView.vue'),
+                    children:[
+                        {
+                            path: "details",
+                            name: "active",
+                            component:()=>import('@/components/ActiveDetails.vue')
+                        }
+                    ]
                 }
             ]
         },
@@ -48,7 +56,6 @@ const router=createRouter({
         },
         {
             path:'/account/setting',
-            name:'userSetting',
             component:()=>import('@/components/UserPage/Setting.vue')
         },
         {
@@ -75,12 +82,16 @@ const router=createRouter({
                     path: 'forum',
                     name:'admin-forum',
                     component:()=>import('@/components/admin/ForumAdmin.vue')
+                },
+                {
+                    path: 'active',
+                    name:'admin-active',
+                    component:()=>import('@/components/admin/ActiveAdmin.vue')
                 }
             ]
         }
     ]
 })
-
 
 router.beforeEach((to, from, next) => {
     const admin=isRoleAdmin()
@@ -90,7 +101,7 @@ router.beforeEach((to, from, next) => {
         next('index')
     }
     else {
-        next();
+        next()
     }
 });
 

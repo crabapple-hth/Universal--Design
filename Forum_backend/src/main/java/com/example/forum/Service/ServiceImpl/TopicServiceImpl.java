@@ -245,6 +245,21 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         return mapper.topicList(page);
     }
 
+    @Override
+    public Integer countTodayTopics() {
+        return mapper.countTodayTopics();
+    }
+
+    @Override
+    public List<Map<String, Object>> countTopicsByType() {
+        return mapper.countTopicsByType();
+    }
+
+    @Override
+    public List<Map<String, Object>> countLastSevenDaysTopics(){
+        return mapper.countLastSevenDaysTopics();
+    }
+
 
     public Boolean like(int topic_id,int user_id){
         QueryWrapper<TopicLike> queryWrapper=new QueryWrapper<>();

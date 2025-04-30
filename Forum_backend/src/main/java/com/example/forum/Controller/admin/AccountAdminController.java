@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -110,6 +111,25 @@ public class AccountAdminController {
 
 
 
+    @GetMapping("topicCreates")
+    public RestBean<Integer> dayTopics(){
+        Integer topicNum = topicService.countTodayTopics();
+        return RestBean.success(topicNum);
+    }
+
+    @GetMapping("TypeTopicNum")
+    public RestBean<List<Map<String, Object>>> getTopicCountByType() {
+        List<Map<String, Object>> result = topicService.countTopicsByType();
+        return RestBean.success(result);
+    }
+
+    @GetMapping("LastSeven")
+    public RestBean<List<Map<String, Object>>> getTopics() {
+        List<Map<String, Object>> result = topicService.countLastSevenDaysTopics();
+        return RestBean.success(result);
+    }
+
+
     private void handleBanned(Account old, Account current) {
         String key = "banned:block"+ old.getUserid();
         if(!old.isBanned() && current.isBanned()) {
@@ -117,5 +137,11 @@ public class AccountAdminController {
         } else if(old.isBanned() && !current.isBanned()) {
             template.delete(key);
         }
+    }
+
+    @GetMapping("/gender/count")
+    public RestBean<List<Map<String, Object>>> getGenderCount() {
+        List<Map<String, Object>> result = detailsService.countUsersByGender();
+        return RestBean.success(result);
     }
 }
