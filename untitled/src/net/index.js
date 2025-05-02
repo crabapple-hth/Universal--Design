@@ -21,7 +21,7 @@ function takeAccessToken(){
     const str=localStorage.getItem(authItemName) ||sessionStorage.getItem(authItemName)
     if(!str) return null;
     const authObj=JSON.parse(str)
-    if(authObj.expire <= new Date()){
+    if(new Date(authObj.expire.replace(" ", "T")) <= new Date()){
         deleteAccessToken()
         ElMessage.warning("登录状态已过期")
         return null
@@ -35,7 +35,7 @@ function takeAccessRole(){
     const str=localStorage.getItem(authItemName) ||sessionStorage.getItem(authItemName)
     if(!str) return null;
     const authObj=JSON.parse(str)
-    if(authObj.expire <= new Date()){
+    if(new Date(authObj.expire.replace(" ", "T")) <= new Date()){
         deleteAccessToken()
         ElMessage.warning("登录状态已过期")
         return null
@@ -59,8 +59,8 @@ function storeAccessToken(remember,token,expire,role){
 
 //删除本地存储的token
 function deleteAccessToken(){
-    localStorage.removeItem(authItemName)
     sessionStorage.removeItem(authItemName)
+    localStorage.removeItem(authItemName)
 }
 
 //post请求封装
