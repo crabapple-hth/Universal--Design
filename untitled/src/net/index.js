@@ -376,6 +376,12 @@ function apiGender(success){
     },(data)=>success(data))
 }
 
+function searchList(keyword,type,success){
+    internalGet(`api/search/topics?keyword=${keyword}`,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicsByType,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
@@ -384,4 +390,5 @@ export {takeAccessToken,login,logout,getCode,
     getAccessToken,getTypeList,isRoleAdmin,apiUserList,apiUserDetailTotal,
     apiUserSave,replyCommentList,apiForumWeather,apiTopicList,apiDelTopic,
     apiSetTop,apiNotificationDelete,apiNotificationDeleteAll,apiNotificationList,
-    internalGet,internalPost,internalPut,internalDelete,apiLastSeven,apiGender,apiTypesNum}
+    internalGet,internalPost,internalPut,internalDelete,apiLastSeven,apiGender,apiTypesNum,
+    searchList}

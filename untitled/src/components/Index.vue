@@ -7,7 +7,7 @@ import {
   getAccount,
   getTopics,
   getTypeList,
-  logout
+  logout, searchList
 } from '../net/index.js';
 import router from "@/router/index.js";
 import { ElMessage } from "element-plus";
@@ -34,6 +34,7 @@ const route = useRoute();
 const show = ref(false);
 const store = useStore();
 const loading=inject("userLoading")
+const searchWord=ref("")
 
 getTypeList((data)=>{store.forum.types=data})
 
@@ -120,6 +121,12 @@ watch(
 const activeMenu = computed(() => route.path);
 
 onMounted(() => { });
+
+function search(){
+  searchList(searchWord.value,1,(data)=>{
+    console.info(data)
+  })
+}
 </script>
 
 <template>
@@ -138,8 +145,8 @@ onMounted(() => { });
           <el-menu-item index="/index">首页</el-menu-item>
           <el-menu-item index="/actives">校园动态</el-menu-item>
           <div class="search-input">
-            <input type="text" placeholder="搜索..." style="border: none; outline: none; flex-grow: 1; padding: 5px;">
-            <button style="background: none; border: none; cursor: pointer; padding: 5px;">
+            <input type="text" placeholder="搜索..." style="border: none; outline: none; flex-grow: 1; padding: 5px;" v-model="searchWord">
+            <button style="background: none; border: none; cursor: pointer; padding: 5px;" @click="search">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
