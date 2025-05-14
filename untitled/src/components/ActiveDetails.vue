@@ -5,6 +5,7 @@ import { apiActivityDetail, apiActivityRegister, apiActivityCancel, apiActivityC
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import {ArrowLeft, Clock, Location, User} from "@element-plus/icons-vue";
+import axios from "axios";
 
 const route = useRoute()
 const router = useRouter()
@@ -80,25 +81,17 @@ const handleJoin = async () => {
     
     if (isRegistered.value) {
       // 取消报名
-      apiActivityCancel(activityId, data => {
-        if (data.code === 200) {
+      apiActivityCancel(activityId, () => {
           ElMessage.success('取消报名成功')
           isRegistered.value = false
           activity.value.currentParticipants--
-        } else {
-          ElMessage.error('取消报名失败')
-        }
       })
     } else {
       // 报名活动
-      apiActivityRegister(activityId, data => {
-        if (data.code === 200) {
+      apiActivityRegister(activityId, () => {
           ElMessage.success('报名成功')
           isRegistered.value = true
           activity.value.currentParticipants++
-        } else {
-          ElMessage.error('报名失败')
-        }
       })
     }
   } catch (err) {
@@ -156,7 +149,7 @@ onMounted(() => {
       
       <div class="activity-content">
         <div class="activity-image">
-          <img :src="activity.coverImage || '/default-activity.jpg'" :alt="activity.title">
+          <img :src="`${axios.defaults.baseURL}/images/${activity.coverImage || 'default-activity.jpg'}`" :alt="activity.title">
         </div>
         
         <div class="activity-description">

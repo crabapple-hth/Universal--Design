@@ -155,7 +155,7 @@ onMounted(()=>{
         <div
             class="content-area"
             v-html="deltaToHtml(topic.content)"
-            style="clear: left;letter-spacing: 2px;line-height: 2em;margin-top: 20px">
+            style="clear: left;letter-spacing: 2px;line-height: 2em;margin-top: 20px; ">
         </div>
         <el-divider/>
         <div class="topic_operate">

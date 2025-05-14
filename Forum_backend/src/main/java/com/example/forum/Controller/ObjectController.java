@@ -31,7 +31,6 @@ public class ObjectController {
     private void fetchImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String imagePath = request.getServletPath().substring(7);
         ServletOutputStream stream = response.getOutputStream();
-        System.out.println(imagePath);
         if(imagePath.length() <= 13) {
             response.setStatus(404);
             stream.println(RestBean.failure(404, "Not found").toString());

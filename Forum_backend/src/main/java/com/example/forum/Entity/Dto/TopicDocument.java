@@ -1,6 +1,8 @@
 package com.example.forum.Entity.Dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -10,6 +12,8 @@ import java.util.Date;
 
 @Data
 @Document(indexName = "topics")
+@AllArgsConstructor
+@NoArgsConstructor
 public class TopicDocument {
     @Id
     private Integer topicId;
@@ -18,7 +22,7 @@ public class TopicDocument {
     private String title;
 
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
-    private String text;
+    private String content;
 
     @Field(type = FieldType.Integer)
     private Integer type;

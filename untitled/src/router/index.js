@@ -26,6 +26,11 @@ const router=createRouter({
                             component:()=>import('@/components/ActiveDetails.vue')
                         }
                     ]
+                },
+                {
+                    path: "search",
+                    name:"search",
+                    component:()=>import('@/components/Topic/SearchList.vue')
                 }
             ]
         },
@@ -46,11 +51,13 @@ const router=createRouter({
                 },
                 {
                     path:"myTopic",
-                    name:"myTopic"
+                    name:"myTopic",
+                    component:()=>import('@/components/Topic/myTopic.vue')
                 },
                 {
                     path:"like",
-                    name:"myLike"
+                    name:"myLike",
+                    component:()=>import('@/components/Topic/likeTopic.vue')
                 }
             ]
         },

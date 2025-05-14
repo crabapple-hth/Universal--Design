@@ -8,10 +8,10 @@ import {Delta} from "@vueup/vue-quill";
 const isLike=ref(false)
 const isCollect=ref(false)
 
-const unlikeImg=ref("src/assets/点赞.png")
-const likeImg=ref("src/assets/已点赞.png")
-const unCollectImg=ref("src/assets/收藏.png")
-const collectImg=ref("src/assets/已收藏.png")
+const unlikeImg=ref("/src/assets/点赞.png")
+const likeImg=ref("/src/assets/已点赞.png")
+const unCollectImg=ref("/src/assets/收藏.png")
+const collectImg=ref("/src/assets/已收藏.png")
 
 
 const props=defineProps({
@@ -21,7 +21,7 @@ const props=defineProps({
   }
 })
 
-const delta=new Delta(JSON.parse(props.topic.text))
+const delta=new Delta(JSON.parse(props.topic.text!=null?props.topic.text:props.topic.content))
 
 let text = '';
 delta.ops.forEach(op => {

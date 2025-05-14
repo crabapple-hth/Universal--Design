@@ -37,7 +37,7 @@ export function apiActivityDelete(id, success) {
 }
 
 // 报名活动
-export function apiActivityRegister(id, success) {
+export function apiActivityRegister(id,success) {
     internalPost(`/api/activities/${id}/register`, {}, {
         'Authorization': "Bearer " + takeAccessToken()
     }, success);

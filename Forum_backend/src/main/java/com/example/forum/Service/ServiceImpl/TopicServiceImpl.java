@@ -11,17 +11,22 @@ import com.example.forum.Entity.Vo.response.TopicDetailsVO;
 import com.example.forum.Entity.Vo.response.TopicPreviewVO;
 import com.example.forum.Mapper.*;
 import com.example.forum.Service.NotificationService;
+import com.example.forum.Service.TopicSearchService;
 import com.example.forum.Service.TopicService;
 import jakarta.annotation.Resource;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements TopicService {
+
+    private static final Logger log = LoggerFactory.getLogger(TopicServiceImpl.class);
 
     @Resource
     TopicMapper mapper;
@@ -43,6 +48,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
 
     @Resource
     NotificationService notificationService;
+
+    @Resource
+    TopicSearchService searchService;
 
 
     @Override
@@ -146,9 +154,39 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         topic.setUpdateTime(new Date());
         topic.setUserId(userId);
         topic.setText(vo.getText().toJSONString());
+        topic.setTop(false);
         if (mapper.insert(topic)==0){
             return "操作失败，请询问管理";
         }
+        
+        // 获取数据库生成的ID
+        Integer topicId = topic.getTopicId();
+        if (topicId == null) {
+            log.error("创建帖子后未获取到ID");
+            return "操作失败，请询问管理";
+        }
+        
+        // 创建并保存TopicDocument到Elasticsearch
+        TopicDocument topicDocument = new TopicDocument();
+        topicDocument.setTopicId(topicId);  // 使用数据库生成的ID
+        topicDocument.setTitle(topic.getTitle());
+        topicDocument.setContent(topic.getText());
+        topicDocument.setType(topic.getType());
+        topicDocument.setUserId(topic.getUserId());
+        topicDocument.setCreatTime(topic.getCreatTime());
+        topicDocument.setUpdateTime(topic.getUpdateTime());
+        topicDocument.setTop(topic.getTop());
+        topicDocument.setViewCount(0);
+        topicDocument.setLikeCount(0);
+        topicDocument.setCommentCount(0);
+        
+        try {
+            searchService.saveTopic(topicDocument);
+        } catch (Exception e) {
+            // 记录错误日志，但不影响主流程
+            log.error("保存帖子到Elasticsearch失败: {}", e.getMessage());
+        }
+        
         return null;
     }
 

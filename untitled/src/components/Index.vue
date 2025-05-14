@@ -36,6 +36,7 @@ const store = useStore();
 const loading=inject("userLoading")
 const searchWord=ref("")
 
+
 getTypeList((data)=>{store.forum.types=data})
 
 const comp=shallowRef(recommendTopic);
@@ -123,9 +124,8 @@ const activeMenu = computed(() => route.path);
 onMounted(() => { });
 
 function search(){
-  searchList(searchWord.value,1,(data)=>{
-    console.info(data)
-  })
+  router.push({path:'/search',query:{keyword:searchWord.value}})
+  searchWord.value=""
 }
 </script>
 
@@ -314,8 +314,8 @@ function search(){
   background-color: gainsboro;
 }
 .main {
-  margin-left: 200px;
-  margin-right: 100px;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 

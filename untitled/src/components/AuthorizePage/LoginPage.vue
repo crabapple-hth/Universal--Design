@@ -70,7 +70,9 @@ const updateRegister=(val)=>{
         <el-form-item prop="password">
           <el-input class="input" v-model="ruleForm.password"  placeholder="请输入密码" type="password" :suffix-icon="View"/>
         </el-form-item>
-        <div style="text-align: right;margin-right: 130px">忘记密码</div>
+        <div style="text-align: right;margin-right: 130px">
+          <div class="reset_password">忘记密码</div>
+        </div>
         <el-form-item>
           <el-button @click="submitForm(formRef)" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">登录</el-button>
         </el-form-item>
@@ -149,7 +151,12 @@ html,body{
 }
 
 .register_link:hover{
-  color: green;
+  color: hotpink;
+  cursor: default;
+}
+
+.reset_password:hover{
+  color: blue;
   cursor: default;
 }
 

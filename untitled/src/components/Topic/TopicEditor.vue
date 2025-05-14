@@ -106,16 +106,24 @@ const quillOptions={
 }
 
 const submitTopic=()=>{
-  creatTopic({
-    type:topic.type,
-    text:topic.text,
-    title:topic.title
-  },()=>{
-    ElMessage.success("发表成功")
-    emit('success')
-  },()=>{
-    ElMessage.warning("111111111")
-  })
+  if(!topic.type){
+    ElMessage.warning("请选择帖子的类型")
+  }else if (!topic.title){
+    ElMessage.warning("请输入帖子的标题")
+  }else if (contentLength.value>2000){
+    ElMessage.warning("字数超过限制，请进行修改")
+  }else {
+    creatTopic({
+      type:topic.type,
+      text:topic.text,
+      title:topic.title
+    },()=>{
+      ElMessage.success("发表成功")
+      emit('success')
+    },()=>{
+      ElMessage.warning("发表出现错误，请稍后再试")
+    })
+  }
 }
 </script>
 
