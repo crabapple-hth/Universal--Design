@@ -4,7 +4,7 @@ import {
   apiForumWeather,
   apiNotificationDelete, apiNotificationDeleteAll,
   apiNotificationList,
-  getAccount,
+  getAccount, getAnnounce,
   getTopics,
   getTypeList,
   logout, searchList
@@ -35,6 +35,17 @@ const show = ref(false);
 const store = useStore();
 const loading=inject("userLoading")
 const searchWord=ref("")
+// const announce=reactive({
+//   data:[]
+// })
+//
+//
+//
+// function announceList(){
+//   getAnnounce((data)=>{
+//     announce.data=data
+//   })
+// }
 
 
 getTypeList((data)=>{store.forum.types=data})
@@ -121,7 +132,9 @@ watch(
 
 const activeMenu = computed(() => route.path);
 
-onMounted(() => { });
+onMounted(() => {
+  // announceList()
+});
 
 function search(){
   router.push({path:'/search',query:{keyword:searchWord.value}})
@@ -143,7 +156,7 @@ function search(){
         >
           <el-menu-item index="0" style="font-size: 25px; margin-right: 10px">校园论坛</el-menu-item>
           <el-menu-item index="/index">首页</el-menu-item>
-          <el-menu-item index="/actives">校园动态</el-menu-item>
+          <el-menu-item index="/actives">校园活动</el-menu-item>
           <div class="search-input">
             <input type="text" placeholder="搜索..." style="border: none; outline: none; flex-grow: 1; padding: 5px;" v-model="searchWord">
             <button style="background: none; border: none; cursor: pointer; padding: 5px;" @click="search">
@@ -205,8 +218,7 @@ function search(){
               <p style="width: 50px">公告</p>
             </div>
             <el-divider style="margin-top: 0"/>
-            <div style="font-size: 15px;color: grey;margin: 8px">此论坛是计算属性允许我们声明性地计算衍生值。然而在有些情
-              况下，我们需要在状态变化时执行一些“副作用”：例如更改 DOM，或是根据异步操作的结果去修改另一处的状态。</div>
+            <div style="font-size: 15px;color: grey;margin: 8px"></div>
           </div>
           <div style="margin-top:20px ">
             <el-icon><Calendar/></el-icon>

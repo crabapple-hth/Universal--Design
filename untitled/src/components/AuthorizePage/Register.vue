@@ -92,13 +92,19 @@ const submitRegisterForm = async (formEl) =>{
   });
 };
 
-const askCode=()=>{
-  getCode(ruleForm.email,coldTime,()=>{
-    ElMessage.success("请求验证码成功")
-  },(message)=>{
-    ElMessage.warning(message)
-  })
-}
+const askCode = () => {
+  registerFormRef.value.validateField('email', (valid) => {
+    if (valid) {
+      getCode(ruleForm.email, coldTime, () => {
+        ElMessage.success("请求验证码成功");
+      }, (message) => {
+        ElMessage.warning(message);
+      });
+    } else {
+      ElMessage.warning("请输入合法的邮箱地址");
+    }
+  });
+};
 </script>
 
 <template>
@@ -122,7 +128,7 @@ const askCode=()=>{
       </el-form-item>
       <el-form-item prop="code">
         <el-input class="code" v-model="ruleForm.code" placeholder="请输入验证码"/>
-        <el-button @click="askCode" :disabled="coldTime>0">{{coldTime>0 ? '请稍后'+coldTime+'秒':'获取验证码'}}</el-button>
+        <el-button @click="askCode" :disabled="coldTime>0||!ruleForm.email">{{coldTime>0 ? '请稍后'+coldTime+'秒':'获取验证码'}}</el-button>
       </el-form-item>
       <el-form-item>
         <el-button @click="submitRegisterForm(registerFormRef)" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">注册</el-button>

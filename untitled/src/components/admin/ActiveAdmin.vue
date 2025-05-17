@@ -317,7 +317,7 @@ onMounted(() => {
         <el-table-column label="封面" width="100">
           <template #default="scope">
             <el-image
-              :src="axios.defaults.baseURL+'/images/'+scope.row.coverImage"
+              :src="`${axios.defaults.baseURL}/images/${scope.row.coverImage || 'default-activity.jpg'}`"
               :preview-src-list="[scope.row.coverImage]"
               fit="cover"
               style="width: 50px; height: 50px"

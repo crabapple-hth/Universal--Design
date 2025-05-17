@@ -382,6 +382,12 @@ function searchList(keyword,type,success){
     },(data)=>success(data))
 }
 
+function getAnnounce(success){
+    internalGet('/api/admin/forum/announce',{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicsByType,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
@@ -391,4 +397,4 @@ export {takeAccessToken,login,logout,getCode,
     apiUserSave,replyCommentList,apiForumWeather,apiTopicList,apiDelTopic,
     apiSetTop,apiNotificationDelete,apiNotificationDeleteAll,apiNotificationList,
     internalGet,internalPost,internalPut,internalDelete,apiLastSeven,apiGender,apiTypesNum,
-    searchList}
+    searchList,getAnnounce}

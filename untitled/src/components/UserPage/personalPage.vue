@@ -8,6 +8,7 @@ import myTopic from "@/components/Topic/myTopic.vue"
 import likeTopic from "@/components/Topic/likeTopic.vue"
 import {useRoute} from "vue-router";
 import {useStore} from "@/store/index.js";
+import UserInfo from "@/components/Topic/userInfo.vue";
 
 const avatar_form = ref(false)
 const loading = ref(false);
@@ -66,27 +67,28 @@ const activeMenu = computed(() => route.path);
         >
           <el-menu-item index="0" style="font-size: 25px; margin-right: 10px">校园论坛</el-menu-item>
           <el-menu-item index="/index">首页</el-menu-item>
-          <el-menu-item index="/login">校园动态</el-menu-item>
-          <el-menu-item index="/market">跳蚤市场</el-menu-item>
-          <el-menu-item index="/talk">趣事闲谈</el-menu-item>
-          <el-menu-item index="/any">其他</el-menu-item>
+          <el-menu-item index="/actives">校园活动</el-menu-item>
           <div class="search-input">
-            <label style="width: 200px">
-              <input class="input_index" placeholder="搜索感兴趣的帖子">
-              <img src="../../assets/search.png" class="btn_pic" alt="搜索">
-            </label>
+            <input type="text" placeholder="搜索..." style="border: none; outline: none; flex-grow: 1; padding: 5px;" v-model="searchWord">
+            <button style="background: none; border: none; cursor: pointer; padding: 5px;" @click="search">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
           </div>
-          <button class="avatar"  @click="toggleAvatarForm">
-            <el-avatar
-                :src="store.avatarUrl"
-            />
-          </button>
+          <user-info/>
+<!--          <button class="avatar"  @click="toggleAvatarForm">-->
+<!--            <el-avatar-->
+<!--                :src="store.avatarUrl"-->
+<!--            />-->
+<!--          </button>-->
           <!-- 头像下拉菜单 -->
-          <div class="avatar_form" v-if="avatar_form">
-            <a @click="navigateTo('/account/info')">我的主页</a>
-            <a @click="navigateTo('/account/setting')">设置</a>
-            <a @click="out">退出登录</a>
-          </div>
+<!--          <div class="avatar_form" v-if="avatar_form">-->
+<!--            <a @click="navigateTo('/account/info')">我的主页</a>-->
+<!--            <a @click="navigateTo('/account/setting')">设置</a>-->
+<!--            <a @click="out">退出登录</a>-->
+<!--          </div>-->
         </el-menu>
       </el-header>
       <el-main class="main">
@@ -130,11 +132,15 @@ const activeMenu = computed(() => route.path);
 }
 
 .search-input {
-  margin-left: 25px;
+  display: flex;
+  align-items: center;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  margin-left: 15%;
   margin-top: 15px;
-  border: 1px solid grey;
-  border-radius: 15px;
-  height: 30px;
+  width: 300px;
 }
 
 .input_index {

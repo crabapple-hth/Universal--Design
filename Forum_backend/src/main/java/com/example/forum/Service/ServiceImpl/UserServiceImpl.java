@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forum.Entity.Dto.Account;
+import com.example.forum.Entity.Dto.AccountInfo;
 import com.example.forum.Entity.Vo.request.AccountInfoVO;
 import com.example.forum.Entity.Vo.request.RegisterVo;
 import com.example.forum.Mapper.AccountInfoMapper;
@@ -41,6 +42,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
 
     @Resource
     JavaMailSender sender;
+
 
     @Override//通过用户名获取用户数据
     public Account GetUserByUsername(String username) {
@@ -98,6 +100,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
         Account account=new Account(null,username,email,password,new Date(),
                 "user",null,false,false);
         userMapper.insert(account);
+        AccountInfo accountInfo=new AccountInfo(null,username,null,"MALE",new Date());
+        accountInfoMapper.insert(accountInfo);
         return null;
     }
 

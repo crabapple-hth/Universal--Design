@@ -1,5 +1,5 @@
 <script setup>
-import {Back, Message, Operation, Right} from "@element-plus/icons-vue";
+import {Back, Message, Operation, Right, User} from "@element-plus/icons-vue";
 import {useStore} from "@/store";
 import {isRoleAdmin, logout} from "@/net";
 import router from "@/router";
@@ -47,15 +47,15 @@ function userLogout() {
       <template #dropdown>
         <el-dropdown-item @click="router.push('/account/info/myTopic')">
           <el-icon>
-            <Operation/>
+            <User/>
           </el-icon>
           个人中心
         </el-dropdown-item>
         <el-dropdown-item @click="router.push('/account/setting')">
           <el-icon>
-            <Message/>
+            <Operation/>
           </el-icon>
-          消息列表
+          个人设置
         </el-dropdown-item>
         <el-dropdown-item @click="userLogout" divided>
           <el-icon>

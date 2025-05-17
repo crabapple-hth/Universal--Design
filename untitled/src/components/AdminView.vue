@@ -27,18 +27,21 @@ const adminMenu=[
       {title:'用户管理',icon:User,index:'/admin/user'},
       {title:'帖子广场管理',icon:ChatDotSquare,index:'/admin/forum'},
       {title:'校园活动管理',icon:Notification,index:'/admin/active'},
-      {title:'实物招领管理',icon:Umbrella},
-      {title:'合作机构管理',icon:School},
-    ]
-  },{
-    title:'探索与发现管理',icon:Position,sub:[
-      {title:'成绩管理',icon:Document},
-      {title:'课程表管理',icon:Files},
-      {title:'教务通知管理',icon:DataLine},
-      {title:'在线图书馆管理',icon:Collection},
-      {title:'预约教室管理',icon:Monitor},
+      {title: '论坛通知管理',icon: Document,index:'/admin/announce'},
+      {title: '敏感词编辑',icon: Files}
+      // {title:'实物招领管理',icon:Umbrella},
+      // {title:'合作机构管理',icon:School},
     ]
   }
+  // },{
+  //   title:'探索与发现管理',icon:Position,sub:[
+  //     {title:'成绩管理',icon:Document},
+  //     {title:'课程表管理',icon:Files},
+  //     {title:'教务通知管理',icon:DataLine},
+  //     {title:'在线图书馆管理',icon:Collection},
+  //     {title:'预约教室管理',icon:Monitor},
+  //   ]
+  // }
 ]
 
 const route=useRoute()

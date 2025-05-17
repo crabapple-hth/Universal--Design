@@ -94,6 +94,11 @@ const router=createRouter({
                     path: 'active',
                     name:'admin-active',
                     component:()=>import('@/components/admin/ActiveAdmin.vue')
+                },
+                {
+                    path: 'announce',
+                    name:'admin-announce',
+                    component:()=>import('@/components/admin/AnnounceAdmin.vue')
                 }
             ]
         }
