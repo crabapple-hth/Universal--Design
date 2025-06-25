@@ -39,7 +39,7 @@ public interface TopicMapper extends BaseMapper<Topic> {
     @Select("SELECT c.topic_id as tid, c.title, c.text, c.type,c.top, c.creat_time as creatTime," +
             " c.update_time as updateTime, a.user_name, a.avatar " +
             "FROM db_topic c " +
-            "JOIN db_account a ON c.user_id = a.user_id")
+            "JOIN db_account a ON c.user_id = a.user_id ")
     Page<TopicDetailsVO> topicList(Page<?> page);
 
     @Select("SELECT COUNT(*) FROM db_topic WHERE DATE(creat_time) = CURDATE()")

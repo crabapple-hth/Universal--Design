@@ -6,6 +6,19 @@ import {reactive, ref} from "vue";
 import {creatCommend, getComments} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 
+
+const sensitiveWords = [
+  '你妈',
+  '傻逼',
+  '他妈的',
+];
+
+const containsSensitiveWords = (text) => {
+  if (!text) return false;
+  return sensitiveWords.some(word => text.includes(word));
+};
+
+
 const props=defineProps({
   tid:{
     type:Number
@@ -14,6 +27,8 @@ const props=defineProps({
     type:Object
   }
 })
+
+const emit=defineEmits(['close', 'success'])
 
 const store = useStore()
 const commentText = ref();
@@ -43,6 +58,12 @@ const optionsName = {
 
 const creat = () => {
   comment.content = commentText.value
+
+  // 敏感词检测
+  if (containsSensitiveWords(commentText.value)) {
+    ElMessage.warning("评论包含不合适内容，请修改后再发表");
+    return;
+  }
   if (!props.commentInfo){
     comment.reply_cid=-1
     comment.top_comment_id=-1
@@ -50,10 +71,11 @@ const creat = () => {
     comment.reply_cid=props.commentInfo.reply_cid;
     comment.top_comment_id=props.commentInfo.top_comment_id
   }
-  console.log(comment)
   creatCommend(comment, () => {
     ElMessage.success("发表成功")
     commentText.value = ''
+    emit('success')
+    emit('close')
   }, () => {
     ElMessage.warning("出现了问题")
   })

@@ -10,6 +10,8 @@ const comment_info=reactive({
   top_comment_id:null
 })
 
+const emit=defineEmits(['success'])
+
 const props=defineProps({
   item:{
     type:Object
@@ -50,6 +52,11 @@ const handleCurrentChange = (val) => {
     props.item.replies=replies.list
   })
 }
+
+
+function successNew(){
+  emit('success')
+}
 </script>
 
 <template>
@@ -61,7 +68,7 @@ const handleCurrentChange = (val) => {
       <div style="margin-left: 50px">{{ props.item.content }}</div>
       <div>
         <div style="margin-left: 50px; margin-top: 15px; display: flex; align-items: center">
-          <div style="color: grey; font-size: 13px; width: 15%">{{ new Date(props.item.time).toLocaleString() }}</div>
+          <div style="color: grey; font-size: 13px; width: 20%">{{ new Date(props.item.time).toLocaleString() }}</div>
           <el-button text style="" size="small" @click="showEditor(item.cid,item.cid)">
             回复
           </el-button>
@@ -76,7 +83,7 @@ const handleCurrentChange = (val) => {
         </div>
         <div>
           <div style="margin-left: 30px; display: flex; align-items: center">
-            <div style="color: grey; font-size: 13px; width: 15%">{{ new Date(reply.time).toLocaleString() }}</div>
+            <div style="color: grey; font-size: 13px; width: 20%">{{ new Date(reply.time).toLocaleString() }}</div>
             <el-button text style="" size="small" @click="showEditor(reply.cid,item.cid)">
               回复
             </el-button>
@@ -97,7 +104,10 @@ const handleCurrentChange = (val) => {
             @current-change="handleCurrentChange"
         />
       </div>
-      <comment-editor v-if="show" :tid="props.tid" :comment-info="comment_info" />
+      <comment-editor  @success="successNew"
+                       @close="show=!show"
+                       v-if="show" :tid="props.tid"
+                       :comment-info="comment_info" />
     </div>
 </template>
 

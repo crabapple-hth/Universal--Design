@@ -81,6 +81,7 @@ const navigateTo = (path) => {
   router.push(path);
 };
 
+//获取用户位置信息，提交后台进行天气获取
 navigator.geolocation.getCurrentPosition(position => {
   const longitude = position.coords.longitude
   const latitude = position.coords.latitude
@@ -104,6 +105,7 @@ navigator.geolocation.getCurrentPosition(position => {
 
 const notification = ref([])
 
+//加载通知
 const loadNotification =
     () => apiNotificationList((data) => notification.value = data)
 loadNotification()
@@ -132,10 +134,15 @@ watch(
 
 const activeMenu = computed(() => route.path);
 
+// function NewTopic(){
+//
+// }
+
 onMounted(() => {
   // announceList()
 });
 
+//搜索请求发送
 function search(){
   router.push({path:'/search',query:{keyword:searchWord.value}})
   searchWord.value=""
@@ -218,7 +225,8 @@ function search(){
               <p style="width: 50px">公告</p>
             </div>
             <el-divider style="margin-top: 0"/>
-            <div style="font-size: 15px;color: grey;margin: 8px"></div>
+            <div style="font-size: 15px;color: grey;margin: 8px">此论坛是计算属性允许我们声明性地计算衍生值。然而在有些情 况下，我们需要在
+              状态变化时执行一些“副作用”：例如更改 DOM，或是根据异步操作的结果去修改另一处的状态。</div>
           </div>
           <div style="margin-top:20px ">
             <el-icon><Calendar/></el-icon>

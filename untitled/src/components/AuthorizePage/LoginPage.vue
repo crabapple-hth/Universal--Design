@@ -1,5 +1,5 @@
 <script setup>
-import {View} from '@element-plus/icons-vue'
+import {Lock, User, View} from '@element-plus/icons-vue'
 import {reactive,ref,inject} from "vue";
 import {login} from "@/net/index.js";
 import {ElMessage} from "element-plus";
@@ -53,34 +53,46 @@ const updateRegister=(val)=>{
 
 <template>
   <div class="login_page">
-    <div class="Login_title">
-      论坛
-    </div>
-    <div class="login_form" v-if="!register">
-      <el-menu mode="horizontal" style="background-color: rgba(241, 234, 234, 0)">
-        <el-menu-item>密码登录</el-menu-item>
-      </el-menu>
-      <el-form
-          ref="formRef"
-          :model="ruleForm"
-          :rules="rules">
-        <el-form-item prop="username">
-          <el-input class="input" v-model="ruleForm.username"  placeholder="请输入用户名或邮箱"/>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input class="input" v-model="ruleForm.password"  placeholder="请输入密码" type="password" :suffix-icon="View"/>
-        </el-form-item>
-        <div style="text-align: right;margin-right: 130px">
-          <div class="reset_password">忘记密码</div>
+    <div class="login_main">
+      <div class="introduce">
+        <img style=" width:100%;height: 100%" src="../../assets/loginImg.jpg">
+      </div>
+      <div class="login_form" v-if="!register">
+        <div style="margin-top: 100px;text-align: center;font-size: 25px">
+          让校园生活更丰富
+          <div style="font-size: 13px;color: gray">
+            欢迎登录xx校园论坛
+          </div>
         </div>
-        <el-form-item>
-          <el-button @click="submitForm(formRef)" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">登录</el-button>
-        </el-form-item>
-      </el-form>
-      <el-divider style="" content-position="center">其他登录方式</el-divider>
-      <div style="text-align: center">QQ,WX,WB</div>
-      <div style="display: flex;justify-content: center">
-        <div class="register_link" @click="()=>{register=!register}">没有账号？立即注册</div>
+        <el-menu mode="horizontal" default-active="0" style="background-color: rgba(241, 234, 234, 0)">
+          <el-menu-item index="0">密码登录</el-menu-item>
+          <el-menu-item index="1">验证码登录</el-menu-item>
+        </el-menu>
+        <el-form
+            ref="formRef"
+            :model="ruleForm"
+            :rules="rules">
+          <el-form-item prop="username">
+            <el-input class="input" :prefix-icon="User" v-model="ruleForm.username"  placeholder="请输入用户名或邮箱"/>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input class="input" v-model="ruleForm.password"
+                      show-password  placeholder="请输入密码"
+                      :prefix-icon="Lock"
+                      type="password"/>
+          </el-form-item>
+          <div style="text-align: right;margin-right: 130px">
+            <div class="reset_password">忘记密码</div>
+          </div>
+          <el-form-item>
+            <el-button @click="submitForm(formRef)" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">登录</el-button>
+          </el-form-item>
+        </el-form>
+        <el-divider style="" content-position="center">其他登录方式</el-divider>
+        <div style="text-align: center">QQ,WX,WB</div>
+        <div style="display: flex;justify-content: center">
+          <div class="register_link" @click="()=>{register=!register}">没有账号？立即注册</div>
+        </div>
       </div>
     </div>
     <Register v-if="register" @update:register="updateRegister" />
@@ -94,31 +106,30 @@ html,body{
   padding: 0;
 }
 .login_page{
-  background: url("../../assets/loginImg.jpg") center center no-repeat;
+  background: white;
   width: 100%;
   height: 100vh;
   background-size: cover;
   position: relative;
 }
 
-.Login_title{
-  font-size: 50px;
-  align-items: center;
-  text-align: center;
-  padding-top: 6%;
+.login_main{
+  display: flex;
+  height: 100vh;
+
+
+  .introduce{
+    border-right:1px solid gainsboro;
+    width: 65%;
+  }
 }
 
+
 .login_form{
-  border: 1px solid ghostwhite;
   width: 500px;
   height: 500px;
-  background-color: rgba(241, 234, 234,0.5);
-  position: absolute;
   margin-top: 10px;
-  top: 50%;  /* 将 login_form 垂直居中对齐  */
-  left: 50%; /* 将 login_form 水平居中对齐 */
-  transform: translate(-50%, -50%); /* 调整 login_form 的位置 */
-  border-radius: 10px; /* 增加圆角 */
+  margin-left: 10px;
 }
 
 .input{

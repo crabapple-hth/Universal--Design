@@ -16,6 +16,7 @@ const typeId=ref(0)
 
 const handleTypeSelect=(id)=>{
   page.value=1
+  noMoreData.value=false
   typeId.value = Number(id);
 };
 

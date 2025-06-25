@@ -16,6 +16,17 @@ defineProps({
   show:Boolean
 })
 
+const sensitiveWords = [
+  '你妈',
+  '傻逼',
+  '他妈的',
+];
+
+const containsSensitiveWords = (text) => {
+  if (!text) return false;
+  return sensitiveWords.some(word => text.includes(word));
+};
+
 const store=useStore()
 
 const topic=reactive({
@@ -106,12 +117,16 @@ const quillOptions={
 }
 
 const submitTopic=()=>{
+
+
   if(!topic.type){
     ElMessage.warning("请选择帖子的类型")
   }else if (!topic.title){
     ElMessage.warning("请输入帖子的标题")
   }else if (contentLength.value>2000){
     ElMessage.warning("字数超过限制，请进行修改")
+  }else if (containsSensitiveWords(deltaToTex(topic.text))) {
+    ElMessage.warning("评论包含不合适内容，请修改后再发表");
   }else {
     creatTopic({
       type:topic.type,

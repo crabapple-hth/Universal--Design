@@ -83,8 +83,8 @@ const init=()=>{
     topic.title=data.title
     topic.content=new Delta(JSON.parse(data.text))
     topic.userId=data.userId
-    topic.creatTime=data.creat_time
-    topic.updateTime=data.update_time
+    topic.creatTime=data.creatTime
+    topic.updateTime=data.updateTime
     topic.username=data.username
     topic.avatar=data.avatar
     topic.likeCount=data.likeCount
@@ -156,6 +156,9 @@ onMounted(()=>{
             class="content-area"
             v-html="deltaToHtml(topic.content)"
             style="clear: left;letter-spacing: 2px;line-height: 2em;margin-top: 20px; ">
+        </div>
+        <div style="text-align: center;font-size: 13px;color: gray">
+          上次修改时间{{new Date(topic.updateTime).toLocaleString()}}
         </div>
         <el-divider/>
         <div class="topic_operate">

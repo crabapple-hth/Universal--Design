@@ -25,7 +25,11 @@ const comment = reactive({
   top_comment_id: null
 })
 
-
+function refresh(){
+  getComments(props.tid, (data) => {
+    comments.list = data.map(item => ({ ...item, showReply: false }));
+  })
+}
 
 onMounted(() => {
   getComments(props.tid, (data) => {
@@ -40,7 +44,7 @@ onMounted(() => {
   <div>
     <comment-editor v-if="show"  :tid="props.tid" />
     <div class="show_comment" v-for="item in comments.list" :key="item.cid">
-      <comment :item="item" :tid="props.tid" />
+      <comment :item="item" :tid="props.tid" @success="refresh" />
       <el-divider />
     </div>
   </div>
