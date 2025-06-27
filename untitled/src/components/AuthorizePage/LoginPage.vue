@@ -10,6 +10,7 @@ import {getUserInfo} from "@/net/api/user.js";
 const formRef=ref()
 const register=ref(false)
 const loading=inject("userLoading")
+const resetPassword=ref(false)
 
 const ruleForm=reactive({
   username:"",
@@ -23,7 +24,6 @@ const rules=reactive({
   ],
   password:[
     {required:true,message:"密码不能为空",trigger:"blur"},
-    {min:6,max:20,message: "用户名长度不能超过20个字符",trigger: "blur"}
   ]
 })
 
@@ -52,11 +52,7 @@ const updateRegister=(val)=>{
 </script>
 
 <template>
-  <div class="login_page">
-    <div class="login_main">
-      <div class="introduce">
-        <img style=" width:100%;height: 100%" src="../../assets/loginImg.jpg">
-      </div>
+  <div>
       <div class="login_form" v-if="!register">
         <div style="margin-top: 100px;text-align: center;font-size: 25px">
           让校园生活更丰富
@@ -82,7 +78,7 @@ const updateRegister=(val)=>{
                       type="password"/>
           </el-form-item>
           <div style="text-align: right;margin-right: 130px">
-            <div class="reset_password">忘记密码</div>
+            <el-link class="reset_password" @click="router.push('/reset')">忘记密码</el-link>
           </div>
           <el-form-item>
             <el-button @click="submitForm(formRef)" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">登录</el-button>
@@ -91,11 +87,9 @@ const updateRegister=(val)=>{
         <el-divider style="" content-position="center">其他登录方式</el-divider>
         <div style="text-align: center">QQ,WX,WB</div>
         <div style="display: flex;justify-content: center">
-          <div class="register_link" @click="()=>{register=!register}">没有账号？立即注册</div>
+          <div class="register_link" @click="()=>{router.push('/register')}">没有账号？立即注册</div>
         </div>
       </div>
-    </div>
-    <Register v-if="register" @update:register="updateRegister" />
   </div>
 </template>
 
@@ -111,17 +105,6 @@ html,body{
   height: 100vh;
   background-size: cover;
   position: relative;
-}
-
-.login_main{
-  display: flex;
-  height: 100vh;
-
-
-  .introduce{
-    border-right:1px solid gainsboro;
-    width: 65%;
-  }
 }
 
 

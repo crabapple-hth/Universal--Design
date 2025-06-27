@@ -14,6 +14,8 @@ function announceList(){
   })
 }
 
+
+
 onMounted(()=>{
   announceList()
 })
@@ -24,8 +26,8 @@ onMounted(()=>{
   <div>
     <div>
       <div class="card-header">
-        <span>活动管理</span>
-        <el-button type="primary" @click="handleAdd" style="margin-right: 200px">添加活动</el-button>
+        <span>通知管理</span>
+        <el-button type="primary" @click="handleAdd" style="margin-right: 200px">添加通知</el-button>
       </div>
     </div>
     <el-divider />

@@ -7,6 +7,7 @@ import com.example.forum.Entity.Dto.TopicType;
 import com.example.forum.Entity.Dto.UserCollects;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
+import com.example.forum.Entity.Vo.request.TopicEditorVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
 import com.example.forum.Entity.Vo.response.TopicDetailsVO;
 
@@ -36,4 +37,5 @@ public interface TopicService extends IService<Topic> {
     Integer countTodayTopics();
     List<Map<String, Object>> countTopicsByType();
     List<Map<String, Object>> countLastSevenDaysTopics();
+    TopicDetailsVO editor(TopicEditorVO vo);
 }

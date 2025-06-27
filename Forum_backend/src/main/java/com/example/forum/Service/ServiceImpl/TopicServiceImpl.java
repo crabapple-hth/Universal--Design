@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.forum.Entity.Dto.*;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
+import com.example.forum.Entity.Vo.request.TopicEditorVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
 import com.example.forum.Entity.Vo.response.TopicDetailsVO;
 import com.example.forum.Entity.Vo.response.TopicPreviewVO;
@@ -270,7 +271,7 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         existingTopic.setType(vo.getType());
         existingTopic.setTitle(vo.getTitle());
         existingTopic.setText(vo.getText().toString());
-        existingTopic.setUpdateTime(new Date()); // Update the update time
+        existingTopic.setUpdateTime(new Date());
         int rowsUpdated = mapper.updateById(existingTopic);
         if (rowsUpdated > 0) {
             return mapper.selectById(topicId).asViewObject(TopicDetailsVO.class);
@@ -296,6 +297,19 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     @Override
     public List<Map<String, Object>> countLastSevenDaysTopics(){
         return mapper.countLastSevenDaysTopics();
+    }
+
+    @Override
+    public TopicDetailsVO editor(TopicEditorVO vo) {
+        QueryWrapper<Topic> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("topic_id",vo.getTopicId());
+        Topic topic=mapper.selectOne(queryWrapper);
+        topic.setTitle(vo.getTitle());
+        topic.setType(vo.getType());
+        topic.setText(String.valueOf(vo.getText()));
+        topic.setUpdateTime(new Date());
+        mapper.insertOrUpdate(topic);
+        return getTopicById(vo.getTopicId());
     }
 
 

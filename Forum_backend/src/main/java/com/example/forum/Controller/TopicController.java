@@ -1,10 +1,12 @@
 package com.example.forum.Controller;
 
 import com.example.forum.Entity.Dto.Account;
+import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.Dto.TopicType;
 import com.example.forum.Entity.RestBean;
 import com.example.forum.Entity.Vo.request.CommentCreatVO;
 import com.example.forum.Entity.Vo.request.TopicCreatVO;
+import com.example.forum.Entity.Vo.request.TopicEditorVO;
 import com.example.forum.Entity.Vo.response.CommentWithUser;
 import com.example.forum.Entity.Vo.response.TopicDetailsVO;
 import com.example.forum.Entity.Vo.response.WeatherVO;
@@ -83,4 +85,14 @@ public class TopicController {
     }
 
 
+    @GetMapping("/delete")
+    public RestBean<Void> delete(int tid){
+        service.delTopic(tid);
+        return RestBean.success();
+    }
+
+    @PostMapping("/editor")
+    public RestBean<TopicDetailsVO> editor(@RequestBody TopicEditorVO vo){
+        return RestBean.success(service.editor(vo));
+    }
 }

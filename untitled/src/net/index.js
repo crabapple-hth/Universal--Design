@@ -121,6 +121,15 @@ function login(username,password,remember,success,failure=defaultFailure){
     },failure)
 }
 
+//重置密码请求
+function resetPassword(data,success){
+    internalPost('/api/auth/resetPassword',data,{
+        'Content-Type':'application/x-www-form-urlencoded',
+    },()=>{
+        success()
+    })
+}
+
 //退出登录
 function logout(success,failure=defaultFailure){
     internalGet("/api/auth/logout",{
@@ -142,9 +151,9 @@ function register(data,success,failure=defaultFailure){
 }
 
 //获取验证码
-function getCode(email,coldTime,success,failure){
+function getCode(email,type,coldTime,success,failure){
     coldTime.value=60
-    internalGet(`/api/auth/getCode?email=${email}`,{
+    internalGet(`/api/auth/getCode?email=${email}&&type=${type}`,{
         'Content-Type':'application/json',
     },(data)=>{
         success()
@@ -433,6 +442,23 @@ function getAnnounce(success){
     },(data)=>success(data))
 }
 
+//删除帖子
+function authDelete(success){
+    internalGet('delete',{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },success)
+}
+
+
+
+//编辑帖子
+function editor(data,success,failure){
+    internalPost('editor',data,{
+        'Authorization':"Bearer "+ takeAccessToken()
+    },(data)=>success(data))
+}
+
+
 export {takeAccessToken,login,logout,getCode,
     register,getTopics,getTopicsByType,getTopicLikeCollect,
     changeLike,changeCollect,getCollects,getLikes,
@@ -442,4 +468,4 @@ export {takeAccessToken,login,logout,getCode,
     apiUserSave,replyCommentList,apiForumWeather,apiTopicList,apiDelTopic,
     apiSetTop,apiNotificationDelete,apiNotificationDeleteAll,apiNotificationList,
     internalGet,internalPost,internalPut,internalDelete,apiLastSeven,apiGender,apiTypesNum,
-    searchList,getAnnounce}
+    searchList,getAnnounce,resetPassword,authDelete,editor}

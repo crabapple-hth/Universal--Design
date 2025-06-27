@@ -2,6 +2,7 @@ package com.example.forum.Controller;
 
 import com.example.forum.Entity.RestBean;
 import com.example.forum.Entity.Vo.request.RegisterVo;
+import com.example.forum.Entity.Vo.request.ResetVO;
 import com.example.forum.Service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,8 +21,9 @@ public class login {
 
     @GetMapping("/getCode")
     public RestBean<Void> GetCode(@RequestParam @Email String email,
+                                    @RequestParam int type,
                                     HttpServletRequest request){
-        String message=service.getVerifyCode(email);
+        String message=service.getVerifyCode(email,type);
         return message==null ?  RestBean.success() : RestBean.failure(400,message);
     }
 
@@ -29,5 +31,11 @@ public class login {
     public RestBean<Object> Register(@Valid RegisterVo registerVo){
         String message=service.RegisterUserByEmail(registerVo);
         return message==null ? RestBean.success() : RestBean.failure(400,message);
+    }
+
+    @PostMapping("/resetPassword")
+    public RestBean<Void> resetPassword(@Valid ResetVO vo){
+        String message=service.ResetPassword(vo);
+        return message==null ? RestBean.success():RestBean.failure(400,message);
     }
 }

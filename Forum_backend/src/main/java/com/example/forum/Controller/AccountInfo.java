@@ -6,12 +6,14 @@ import com.example.forum.Entity.Dto.Topic;
 import com.example.forum.Entity.Dto.UserCollects;
 import com.example.forum.Entity.RestBean;
 import com.example.forum.Entity.Vo.request.AccountInfoVO;
+import com.example.forum.Entity.Vo.request.ResetVO;
 import com.example.forum.Entity.Vo.response.AccountVO;
 import com.example.forum.Service.ServiceImpl.AccountInfoServiceImpl;
 import com.example.forum.Service.ServiceImpl.TopicServiceImpl;
 import com.example.forum.Service.ServiceImpl.UserServiceImpl;
 import com.example.forum.Service.UserService;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,5 +70,6 @@ public class AccountInfo {
     public RestBean<Object> getInfo(@RequestAttribute("user_id") int userId){
         return RestBean.success(accountInfoService.getAccountInfoById(userId));
     }
+
 
 }

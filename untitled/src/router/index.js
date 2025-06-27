@@ -35,11 +35,27 @@ const router=createRouter({
             ]
         },
         {
-            path:'/login',
-            name:'login',
-            component:()=>import('@/components/AuthorizePage/LoginPage.vue')
-        },
-        {
+            path:'/welcome',
+            name:'/welcome',
+            component:()=>import('@/components/AuthorizePage/WelcomeView.vue'),
+            children:[
+                {
+                    path:'/login',
+                    name:'login',
+                    component:()=>import('@/components/AuthorizePage/LoginPage.vue'),
+                },
+                {
+                    path:'/reset',
+                    name:'/reset',
+                    component:()=>import('@/components/AuthorizePage/ResetPassword.vue')
+                },
+                {
+                    path:'/register',
+                    name:'/register',
+                    component:()=>import('@/components/AuthorizePage/Register.vue')
+                },
+            ]
+        }, {
             path:'/account/info',
             name:'userinfo',
             component:()=>import('@/components/UserPage/personalPage.vue'),
@@ -107,7 +123,7 @@ const router=createRouter({
 
 router.beforeEach((to, from, next) => {
     const admin=isRoleAdmin()
-    if (to.fullPath !== "/login" && isUnauthorized() ) {
+    if (to.fullPath === "/index" && isUnauthorized() ) {
         next('login');
     }else if(to.fullPath.startsWith('/admin') && !admin){
         next('index')

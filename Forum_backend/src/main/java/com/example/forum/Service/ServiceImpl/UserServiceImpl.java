@@ -7,6 +7,7 @@ import com.example.forum.Entity.Dto.Account;
 import com.example.forum.Entity.Dto.AccountInfo;
 import com.example.forum.Entity.Vo.request.AccountInfoVO;
 import com.example.forum.Entity.Vo.request.RegisterVo;
+import com.example.forum.Entity.Vo.request.ResetVO;
 import com.example.forum.Mapper.AccountInfoMapper;
 import com.example.forum.Mapper.UserMapper;
 import com.example.forum.Service.UserService;
@@ -51,29 +52,47 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
         return userMapper.selectOne(queryWrapper);
     }
 
-    public String VerifyCode(String email){
+    public String VerifyCode(String email,int type){
         Random random=new Random();
         int code=random.nextInt(899999)+100000;
         SimpleMailMessage message=new SimpleMailMessage();
-        message.setSubject("【htwx】验证码");
-        message.setText("您请求的验证码为"+code+"有效时间为三分钟，请勿将验证码告知他人避免账号被他人使用");
+        if (type==1){
+            message.setSubject("【htwx】注册验证码");
+            message.setText("您请求的验证码为"+code+"有效时间为三分钟，请勿将验证码告知他人避免账号被他人使用");
+        } else if (type==2) {
+            message.setSubject("【htwx】重置密码验证码");
+            message.setText("您请求的验证码为"+code+"有效时间为三分钟，请勿将验证码告知他人避免账号被他人使用");
+        }
         message.setTo(email);
         message.setFrom("htwx123qq@163.com");
         sender.send(message);
         ValueOperations<String, String> operations=stringRedisTemplate.opsForValue();
-        operations.set("RegisterEmailCode", String.valueOf(code),1, TimeUnit.MINUTES);
+        if (type==1){
+            operations.set("RegisterEmailCode", String.valueOf(code),1, TimeUnit.MINUTES);
+        }else if (type==2){
+            operations.set("ResetEmailCode", String.valueOf(code),1, TimeUnit.MINUTES);
+        }
         return null;
     }
 
     @Override
-    public String getVerifyCode(String email) {
+    public String getVerifyCode(String email,int type) {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", email);
-        if (!userMapper.exists(queryWrapper)) {
-            return VerifyCode(email);
-        }else {
-            return "该邮箱已被注册";
+        if (type==1){
+            if (!userMapper.exists(queryWrapper)) {
+                return VerifyCode(email,type);
+            }else {
+                return "该邮箱已被注册";
+            }
+        } else if (type==2) {
+            if (userMapper.exists(queryWrapper)){
+                return VerifyCode(email,type);
+            }else {
+                return "用户不存在";
+            }
         }
+        return null;
     }
 
     @Override
@@ -83,6 +102,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, Account> implements
         return userMapper.selectOne(queryWrapper);
     }
 
+    @Override
+    public String ResetPassword(ResetVO vo) {
+        String code=stringRedisTemplate.opsForValue().get("ResetEmailCode");
+        if (!vo.getCode().equals(code)){
+            return "验证码错误";
+        }
+        if (!userMapper.exists(new QueryWrapper<Account>().eq("email",vo.getEmail()))){
+            return "用户不存在";
+        }
+        QueryWrapper<Account> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("email",vo.getEmail());
+        Account account=userMapper.selectOne(queryWrapper);
+        account.setPassword(passwordEncoder.encode(vo.getPassword()));
+        userMapper.insertOrUpdate(account);
+        return null;
+    }
 
 
     @Override

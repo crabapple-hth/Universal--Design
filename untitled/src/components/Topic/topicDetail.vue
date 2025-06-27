@@ -2,6 +2,7 @@
 
 import {ArrowLeft, ChatLineRound, Picture} from "@element-plus/icons-vue";
 import {
+  authDelete,
   changeCollect,
   changeLike,
   creatCommend,
@@ -10,7 +11,7 @@ import {
   getTopicLikeCollect,
   takeAccessToken
 } from "@/net/index.js";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import {ref,onMounted,reactive} from "vue";
 import router from "@/router/index.js";
 import {useRoute} from "vue-router";
@@ -23,10 +24,12 @@ import axios from "axios";
 import {useStore} from "@/store/index.js";
 import Recommend from "@/components/Topic/commentBox.vue";
 import CommentBox from "@/components/Topic/commentBox.vue";
+import TopicEditor from "@/components/Topic/TopicEditor.vue";
 
 const route=useRoute()
 const store=useStore()
 const boxShow=ref(false)
+const show = ref(false);
 
 const isInput=ref(false)
 
@@ -38,6 +41,7 @@ const topicId=route.query.tid
 const topic=reactive({
   title:"",
   content:"",
+  userId:"",
   creatTime:"",
   updateTime:"",
   username:"",
@@ -77,9 +81,17 @@ const collect=()=>{
   })
 }
 
+const text=reactive(
+    {
+      text:"",
+      type:""
+    }
+)
 
 const init=()=>{
   getTopicDetails(topicId,(data)=>{
+    text.text=data.text
+    text.type=data.type
     topic.title=data.title
     topic.content=new Delta(JSON.parse(data.text))
     topic.userId=data.userId
@@ -116,6 +128,20 @@ function deltaToHtml(delta) {
     }
   })
   return html
+}
+
+function ToDelete(){
+  authDelete(()=>{
+    ElMessage.success("删除成功")
+  })
+  dialogVisible.value=false
+}
+
+const dialogVisible = ref(false)
+
+
+function editorTopic(){
+  show.value=true
 }
 
 
@@ -173,12 +199,34 @@ onMounted(()=>{
           <el-button @click="boxShow=!boxShow" text>
             <img src="../../assets/评论.png" class="topic_operate_img" style="height: 20px" alt="">评论
           </el-button>
+          <div class="auth_operate" v-show="topic.userId===store.user.userid">
+            <el-button text  @click="editorTopic">编辑帖子</el-button>
+            <el-button text  @click="dialogVisible=true">删除帖子</el-button>
+            <el-dialog
+                v-model="dialogVisible"
+                title="提示"
+                width="500"
+            >
+              <span>确定要删除该帖子吗</span>
+              <template #footer>
+                <div class="dialog-footer">
+                  <el-button @click="dialogVisible = false">取消</el-button>
+                  <el-button type="primary" @click="ToDelete">
+                    确定
+                  </el-button>
+                </div>
+              </template>
+            </el-dialog>
+          </div>
         </div>
         <div>
           <comment-box :tid="topicId" :show="boxShow"/>
         </div>
       </el-main>
     </el-container>
+    <topic-editor :show="show" @success="show = false" @close="show = false" v-if="topic"
+                  :default-title="topic.title" :default-text="text.text" :topic-id="topicId"
+                  :default-type="text.type"  submit-button="更新帖子内容"   />
   </div>
 </template>
 
@@ -221,7 +269,12 @@ onMounted(()=>{
 }
 
 .topic_operate{
+  display: flex;
   margin-top: 10px;
+
+  .auth_operate{
+    margin-left: 45%;
+  }
 }
 
 

@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(conf->conf
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/api/admin/forum/announce").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("admin")
                         .anyRequest().hasAnyRole("user","admin")
                 )

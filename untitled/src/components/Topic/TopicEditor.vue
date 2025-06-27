@@ -6,14 +6,34 @@ import ImageReSize from "quill-image-resize-vue"
 import {ImageExtend,QuillWatch} from  "quill-image-super-solution-module"
 import {reactive,ref,defineEmits,defineComponent,computed} from "vue";
 import axios from "axios";
-import {takeAccessToken, creatTopic, getTypeList} from "@/net/index.js";
+import {takeAccessToken, creatTopic, getTypeList, editor} from "@/net/index.js";
 import {ElMessage} from "element-plus";
 import {useStore} from "@/store/index.js";
 
 
 
-defineProps({
-  show:Boolean
+const props=defineProps({
+  show:Boolean,
+  defaultTitle: {
+    default: '',
+    type: String
+  },
+  defaultText: {
+    default: '',
+    type: String
+  },
+  defaultType: {
+    default: "",
+    type: String
+  },
+  submitButton: {
+    default: '立即发表主题',
+    type: String
+  },
+  topicId:{
+    default:"",
+    type:String,
+  }
 })
 
 const sensitiveWords = [
@@ -41,10 +61,20 @@ const emit=defineEmits(['close','success'])
 
 const refEditor=ref()
 
-function initTopic(){
-  refEditor.value.setContents('','user')
-  topic.title=""
-  topic.type=null
+function initTopic() {
+  if(props.defaultText)
+    topic.text = new Delta(JSON.parse(props.defaultText))
+  else
+    refEditor.value.setContents('', 'user')
+  topic.title = props.defaultTitle
+  topic.type = findTypeById(props.defaultType).id
+}
+
+function findTypeById(id){
+  for (let type of store.forum.types) {
+    if(type.id === id)
+      return type
+  }
 }
 
 
@@ -117,28 +147,38 @@ const quillOptions={
 }
 
 const submitTopic=()=>{
-
-
-  if(!topic.type){
-    ElMessage.warning("请选择帖子的类型")
-  }else if (!topic.title){
-    ElMessage.warning("请输入帖子的标题")
-  }else if (contentLength.value>2000){
-    ElMessage.warning("字数超过限制，请进行修改")
-  }else if (containsSensitiveWords(deltaToTex(topic.text))) {
-    ElMessage.warning("评论包含不合适内容，请修改后再发表");
+  if (props.submitButton==="立即发表主题"){
+    if(!topic.type){
+      ElMessage.warning("请选择帖子的类型")
+    }else if (!topic.title){
+      ElMessage.warning("请输入帖子的标题")
+    }else if (contentLength.value>2000){
+      ElMessage.warning("字数超过限制，请进行修改")
+    }else if (containsSensitiveWords(deltaToTex(topic.text))) {
+      ElMessage.warning("评论包含不合适内容，请修改后再发表");
+    }else {
+      creatTopic({
+        type:topic.type,
+        text:topic.text,
+        title:topic.title
+      },()=>{
+        ElMessage.success("发表成功")
+        emit('success')
+      },()=>{
+        ElMessage.warning("发表出现错误，请稍后再试")
+      })
+    }
   }else {
-    creatTopic({
+    editor({
+      topicId:props.topicId,
       type:topic.type,
       text:topic.text,
       title:topic.title
-    },()=>{
-      ElMessage.success("发表成功")
-      emit('success')
-    },()=>{
-      ElMessage.warning("发表出现错误，请稍后再试")
+    },(data)=>{
+      ElMessage.success("更新帖子成功")
     })
   }
+
 }
 </script>
 
@@ -177,7 +217,7 @@ const submitTopic=()=>{
           当前字数 {{contentLength}} （最大支持2000）
         </div>
         <div>
-          <el-button type="success" @click="submitTopic" plain>立即发表</el-button>
+          <el-button type="success" @click="submitTopic" plain>{{props.submitButton}}</el-button>
         </div>
       </div>
     </el-drawer>

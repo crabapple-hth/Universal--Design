@@ -13,7 +13,8 @@ export const useStore=defineStore('general',{
                 creatTime:''
             },
             forum:{
-                types:[]
+                types:[],
+                announce:'',
             }
         }
     },getters:{

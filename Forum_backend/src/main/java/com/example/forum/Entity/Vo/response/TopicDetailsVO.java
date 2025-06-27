@@ -16,6 +16,7 @@ public class TopicDetailsVO {
     String title;
     String text;
     Integer type;
+    Integer userId;
     Boolean top;
     Date creatTime;
     Date updateTime;

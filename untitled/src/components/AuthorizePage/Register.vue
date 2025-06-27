@@ -95,7 +95,7 @@ const submitRegisterForm = async (formEl) =>{
 const askCode = () => {
   registerFormRef.value.validateField('email', (valid) => {
     if (valid) {
-      getCode(ruleForm.email, coldTime, () => {
+      getCode(ruleForm.email,1, coldTime, () => {
         ElMessage.success("请求验证码成功");
       }, (message) => {
         ElMessage.warning(message);
@@ -109,7 +109,7 @@ const askCode = () => {
 
 <template>
   <div class="register_form">
-    <div style="text-align: center;font-size: 20px;margin-bottom: 20px">欢迎注册</div>
+    <div style="text-align: center;font-size: 20px;margin-bottom: 20px;margin-left: 90px">欢迎注册</div>
     <el-form
         ref="registerFormRef"
         :model="ruleForm"
@@ -133,23 +133,15 @@ const askCode = () => {
       <el-form-item>
         <el-button @click="submitRegisterForm(registerFormRef)" type="primary" style="margin-left: 100px;width: 300px;margin-top: 20px" size="default">注册</el-button>
       </el-form-item>
-      <a style="margin-left: 175px" href="#" @click="showLogin" >已有账号？点击登录</a>
+      <el-link style="margin-left: 175px" href="#" @click="router.push('/login')" >已有账号？点击登录</el-link>
     </el-form>
   </div>
 </template>
 
 <style scoped>
 .register_form{
-  border: 1px solid ghostwhite;
-  width: 500px;
-  height: 500px;
-  background-color: rgba(241, 234, 234, 0.76);
-  position: absolute;
-  margin-top: 10px;
-  top: 50%;  /* 将 login_form 垂直居中对齐  */
-  left: 50%; /* 将 login_form 水平居中对齐 */
-  transform: translate(-50%, -50%); /* 调整 login_form 的位置 */
-  border-radius: 10px; /* 增加圆角 */
+  margin-top: 100px;
+  margin-left: 20px;
 }
 
 .input{

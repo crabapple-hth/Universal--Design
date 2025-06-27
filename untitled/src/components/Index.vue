@@ -35,17 +35,11 @@ const show = ref(false);
 const store = useStore();
 const loading=inject("userLoading")
 const searchWord=ref("")
-// const announce=reactive({
-//   data:[]
-// })
-//
-//
-//
-// function announceList(){
-//   getAnnounce((data)=>{
-//     announce.data=data
-//   })
-// }
+
+
+getAnnounce((data)=>{
+  store.forum.announce=data[0].content
+})
 
 
 getTypeList((data)=>{store.forum.types=data})
@@ -225,8 +219,7 @@ function search(){
               <p style="width: 50px">公告</p>
             </div>
             <el-divider style="margin-top: 0"/>
-            <div style="font-size: 15px;color: grey;margin: 8px">此论坛是计算属性允许我们声明性地计算衍生值。然而在有些情 况下，我们需要在
-              状态变化时执行一些“副作用”：例如更改 DOM，或是根据异步操作的结果去修改另一处的状态。</div>
+            <div style="font-size: 15px;color: grey;margin: 8px">{{store.forum.announce}}</div>
           </div>
           <div style="margin-top:20px ">
             <el-icon><Calendar/></el-icon>
