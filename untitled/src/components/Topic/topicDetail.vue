@@ -41,11 +41,13 @@ const topicId=route.query.tid
 const topic=reactive({
   title:"",
   content:"",
+  type:"",
   userId:"",
   creatTime:"",
   updateTime:"",
   username:"",
   avatar:"",
+  text:"",
   likeCount:0,
   collectCount:0
 })
@@ -81,19 +83,12 @@ const collect=()=>{
   })
 }
 
-const text=reactive(
-    {
-      text:"",
-      type:""
-    }
-)
-
 const init=()=>{
   getTopicDetails(topicId,(data)=>{
-    text.text=data.text
-    text.type=data.type
+    topic.type=data.type
     topic.title=data.title
     topic.content=new Delta(JSON.parse(data.text))
+    topic.text=data.text
     topic.userId=data.userId
     topic.creatTime=data.creatTime
     topic.updateTime=data.updateTime
@@ -131,8 +126,9 @@ function deltaToHtml(delta) {
 }
 
 function ToDelete(){
-  authDelete(()=>{
+  authDelete(topicId,()=>{
     ElMessage.success("删除成功")
+    router.push("/index")
   })
   dialogVisible.value=false
 }
@@ -225,8 +221,8 @@ onMounted(()=>{
       </el-main>
     </el-container>
     <topic-editor :show="show" @success="show = false" @close="show = false" v-if="topic"
-                  :default-title="topic.title" :default-text="text.text" :topic-id="topicId"
-                  :default-type="text.type"  submit-button="更新帖子内容"   />
+                  :default-title="topic.title" :default-text="topic.text" :topic-id="topicId"
+                  :default-type="topic.type"  submit-button="更新帖子内容"   />
   </div>
 </template>
 

@@ -176,6 +176,7 @@ const submitTopic=()=>{
       title:topic.title
     },(data)=>{
       ElMessage.success("更新帖子成功")
+      emit('success')
     })
   }
 

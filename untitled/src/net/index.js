@@ -443,8 +443,8 @@ function getAnnounce(success){
 }
 
 //删除帖子
-function authDelete(success){
-    internalGet('delete',{
+function authDelete(tid,success){
+    internalGet(`delete?tid=${tid}`,{
         'Authorization':"Bearer "+ takeAccessToken()
     },success)
 }

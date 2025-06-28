@@ -86,7 +86,7 @@ public class TopicController {
 
 
     @GetMapping("/delete")
-    public RestBean<Void> delete(int tid){
+    public RestBean<Void> delete(@RequestParam int tid){
         service.delTopic(tid);
         return RestBean.success();
     }
