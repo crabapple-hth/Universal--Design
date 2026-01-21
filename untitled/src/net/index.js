@@ -76,7 +76,7 @@ function internalPost(url,data,header,success,failure,error=defaultError){
 
 //get请求封装
 function internalGet(url, headers, success, failure, error = defaultError){
-    axios.get(url, { headers: headers }).then(({data}) => {
+    axios.get(url, { headers: headers,timeout:60000 }).then(({data}) => {
         if(data.code === 200) {
             success(data.data)
         }else {

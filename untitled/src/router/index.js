@@ -28,6 +28,11 @@ const router=createRouter({
                     ]
                 },
                 {
+                    path: "AiChat",
+                    name: "AiChat",
+                    component:()=>import('@/components/AiChat.vue')
+                },
+                {
                     path: "search",
                     name:"search",
                     component:()=>import('@/components/Topic/SearchList.vue')

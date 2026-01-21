@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/api/admin/forum/announce").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("admin")
+                        .requestMatchers("/api/chat/**").permitAll()
                         .anyRequest().hasAnyRole("user","admin")
                 )
                 .formLogin(conf->conf

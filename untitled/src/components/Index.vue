@@ -155,9 +155,10 @@ function search(){
             @select="handleSelect"
             router
         >
-          <el-menu-item index="0" style="font-size: 25px; margin-right: 10px">校园论坛</el-menu-item>
+          <el-menu-item style="font-size: 25px; margin-right: 10px">校园论坛</el-menu-item>
           <el-menu-item index="/index">首页</el-menu-item>
           <el-menu-item index="/actives">校园活动</el-menu-item>
+          <el-menu-item index="/AiChat">AI聊天</el-menu-item>
           <div class="search-input">
             <input type="text" placeholder="搜索..." style="border: none; outline: none; flex-grow: 1; padding: 5px;" v-model="searchWord">
             <button style="background: none; border: none; cursor: pointer; padding: 5px;" @click="search">
