@@ -1,6 +1,7 @@
 package com.example.forum.Controller.Ai;
 
 
+import com.example.forum.Entity.RestBean;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,7 @@ public class ChatController {
     private final ChatClient chatClient;
 
     @GetMapping("/ai")
-    public String AiChat(@RequestParam(value="message") String message){
-        return chatClient.prompt(message).call().content();
+    public RestBean<String> AiChat(@RequestParam(value="message") String message){
+        return RestBean.success(chatClient.prompt(message).call().content());
     }
 }
